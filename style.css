@@ -1,0 +1,54 @@
+*{box-sizing:border-box}
+:root{
+  font-family:Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+  color:#17191d;background:#f6f7f9;font-synthesis:none
+}
+body{margin:0;background:#f6f7f9}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app-shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;padding:24px 16px;background:#fff;
+  border-right:1px solid #e5e7eb;display:flex;flex-direction:column;gap:8px
+}
+.brand{font-size:22px;font-weight:900;margin:0 10px 22px}
+.nav{border:0;background:transparent;padding:12px 14px;border-radius:12px;text-align:left}
+.nav:hover,.nav.active{background:#eef1f5}
+.sidebar-note{margin-top:auto;padding:12px;color:#8a9099;font-size:12px}
+.main{width:100%;max-width:1440px;margin:auto;padding:32px}
+.topbar{margin-bottom:22px}.topbar h1{margin:0 0 6px}.topbar p{margin:0;color:#737a84}
+.view{display:block}.hidden{display:none!important}
+.panel{background:#fff;border:1px solid #e4e7ec;border-radius:18px;padding:22px;margin-bottom:20px}
+.hero{min-height:250px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.hero h2{font-size:clamp(34px,4.5vw,60px);line-height:1.03;letter-spacing:-.05em;margin:12px 0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;color:#707782}
+.primary{border:0;border-radius:12px;background:#17191d;color:white;padding:12px 18px;font-weight:800}
+.primary:disabled{opacity:.45;cursor:not-allowed}.small{padding:9px 13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.muted,.empty{color:#858b94}.status{min-height:24px;margin-top:12px;color:#646b74}
+.dropzone{margin-top:16px;min-height:145px;border:1.5px dashed #c7ccd4;border-radius:15px;display:grid;place-content:center;text-align:center;gap:8px;background:#fafbfc}
+.dropzone span{color:#818891}
+.material-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border:1px solid #eceef1;border-radius:12px;margin-top:10px}
+.material-row button{border:0;background:none;font-weight:800;text-align:left}
+.badge{font-size:12px;background:#eef1f4;border-radius:999px;padding:4px 8px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.85fr);gap:20px}
+.pane-head{display:flex;align-items:center;justify-content:space-between;gap:14px}.pane-head h3{margin:0}
+.preview{margin-top:14px;min-height:520px;background:#f0f2f5;border-radius:12px;overflow:hidden}
+.preview img,.preview iframe{width:100%;height:70vh;min-height:520px;border:0;display:block;object-fit:contain}
+.note{line-height:1.75}.note h2,.note h3{margin-top:24px}.note ul{padding-left:20px}
+.note-box{padding:13px 15px;border:1px solid #eceef1;border-radius:12px;background:#fafbfc;margin:10px 0}
+.form-grid{display:grid;grid-template-columns:1.4fr .6fr 1fr 1fr;gap:16px;margin:18px 0}
+label{display:grid;gap:8px;font-weight:750}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8dce2;border-radius:10px;background:white}
+.quiz-stack{display:grid;gap:16px}.question h3{margin-top:0}
+.choice{display:flex;align-items:center;gap:9px;border:1px solid #e1e4e8;border-radius:10px;padding:10px 12px;margin-top:8px}
+.choice input{width:auto}
+.score{font-size:48px;font-weight:900;margin:6px 0 20px}
+.feedback{padding:13px 14px;background:#f3f5f7;border-radius:11px;margin:10px 0}
+.mastery-row{display:grid;grid-template-columns:180px 1fr 62px;align-items:center;gap:14px;margin-top:14px}
+.bar{height:10px;background:#eceff3;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;width:var(--w);background:#17191d}
+@media(max-width:900px){
+  .app-shell{grid-template-columns:1fr}.sidebar{height:auto;flex-direction:row;overflow:auto;border-right:0;border-bottom:1px solid #e4e7ec;padding:10px;z-index:10}
+  .brand,.sidebar-note{display:none}.nav{white-space:nowrap}.main{padding:18px}.grid2,.workspace,.form-grid{grid-template-columns:1fr}.hero{min-height:auto;align-items:flex-start;flex-direction:column}
+  .preview img,.preview iframe{height:55vh;min-height:360px}.mastery-row{grid-template-columns:110px 1fr 50px}
+}

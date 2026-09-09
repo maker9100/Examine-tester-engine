@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">Study AI</div>
+    <button class="nav active" data-view="home">홈</button>
+    <button class="nav" data-view="materials">내 자료</button>
+    <button class="nav" data-view="quiz">문제 풀기</button>
+    <button class="nav" data-view="analysis">학습 분석</button>
+    <div class="sidebar-note">V0.1 · Local</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">홈</h1>
+        <p>자료를 넣고 → 요약하고 → 풀고 → 약점을 찾는다.</p>
+      </div>
+    </header>
+
+    <section id="homeView" class="view">
+      <div class="hero panel">
+        <div>
+          <span class="eyebrow">AI STUDY WORKSPACE</span>
+          <h2>교재 하나로<br>복습 루프 완성.</h2>
+          <p>이미지나 PDF를 넣으면 요약노트와 문제를 만들고 오답까지 분석한다.</p>
+        </div>
+        <button id="goUpload" class="primary">자료 추가</button>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>최근 자료</h3>
+          <div id="recentMaterials" class="empty">아직 자료가 없다.</div>
+        </div>
+        <div class="panel">
+          <h3>취약 개념</h3>
+          <div id="weakConcepts" class="empty">문제를 풀면 분석된다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="materialsView" class="view hidden">
+      <div class="panel">
+        <h2>학습자료 추가</h2>
+        <p class="muted">PDF / PNG / JPG / WEBP / HEIC · 최대 15MB</p>
+        <label class="dropzone" for="fileInput">
+          <strong>파일 선택</strong>
+          <span>교과서, 학습지, 프린트 이미지를 올려라.</span>
+        </label>
+        <input id="fileInput" type="file" hidden accept="image/*,.pdf,application/pdf">
+        <div id="uploadStatus" class="status"></div>
+      </div>
+
+      <div class="panel">
+        <h3>내 자료</h3>
+        <div id="materialsList" class="empty">자료가 없다.</div>
+      </div>
+
+      <div id="workspace" class="workspace hidden">
+        <div class="panel">
+          <div class="pane-head">
+            <h3>원본</h3>
+            <span id="selectedFilename" class="muted"></span>
+          </div>
+          <div id="preview" class="preview"></div>
+        </div>
+
+        <div class="panel">
+          <div class="pane-head">
+            <h3>AI 요약노트</h3>
+            <button id="analyzeBtn" class="primary small">AI 분석</button>
+          </div>
+          <div id="note" class="note empty">분석하면 여기에 요약노트가 나온다.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizView" class="view hidden">
+      <div class="panel">
+        <h2>문제 만들기</h2>
+        <div class="form-grid">
+          <label>학습자료
+            <select id="quizMaterial"></select>
+          </label>
+          <label>문제 수
+            <input id="quizCount" type="number" min="1" max="30" value="10">
+          </label>
+          <label>객관식 비율
+            <input id="mcqPercent" type="range" min="0" max="100" step="10" value="70">
+            <span id="mcqLabel">객관식 70% / 서술형 30%</span>
+          </label>
+          <label>난이도
+            <select id="difficulty">
+              <option value="mixed">혼합</option>
+              <option value="easy">쉬움</option>
+              <option value="normal">보통</option>
+              <option value="hard">어려움</option>
+            </select>
+          </label>
+        </div>
+        <button id="generateQuiz" class="primary">문제 생성</button>
+        <div id="quizStatus" class="status"></div>
+      </div>
+
+      <form id="quizForm" class="quiz-stack hidden"></form>
+      <div id="resultPanel" class="panel hidden"></div>
+    </section>
+
+    <section id="analysisView" class="view hidden">
+      <div class="panel">
+        <h2>학습 분석</h2>
+        <p class="muted">점수가 낮은 개념부터 복습하면 된다.</p>
+        <div id="masteryList" class="empty">아직 분석 데이터가 없다.</div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
