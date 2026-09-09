@@ -5,68 +5,63 @@
 <title>EDU AI</title><link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<div class="app">
-<header class="topbar">
-  <button class="wordmark" data-go="home" aria-label="홈"><span class="logo">E</span><span>EDU AI</span></button>
-  <nav class="nav">
-    <button class="tab active" data-view="home">홈</button><button class="tab" data-view="materials">자료</button>
-    <button class="tab" data-view="quiz">문제</button><button class="tab" data-view="analysis">분석</button>
-  </nav>
-  <div class="top-actions"><span id="modeBadge" class="mode">연결 확인 중</span><button class="icon-btn" id="themeBtn" title="테마">◐</button></div>
+<div class="site-shell">
+<header class="hero-head">
+  <div class="brand-line"><div class="brand-icon">📚</div><div><h1>EDU AI</h1><p>학습자료를 분석해 요약 노트와 문제를 만들고, 오답을 기반으로 취약점을 찾아줍니다.</p></div></div>
 </header>
-
+<nav class="main-nav">
+  <button class="tab active" data-view="home">홈</button><button class="tab" data-view="materials">자료</button>
+  <button class="tab" data-view="quiz">문제</button><button class="tab" data-view="analysis">분석</button>
+  <span id="modeBadge" class="mode-badge">연결 확인 중</span>
+</nav>
 <main class="content">
 <section id="homeView" class="view">
-  <div class="hero">
-    <div class="hero-copy">
-      <span class="pill">AI 학습 도구</span>
-      <h1>자료 하나면<br><span>복습 준비 끝.</span></h1>
-      <p>교과서나 학습지를 올리면 핵심 요약부터 문제, 오답 분석까지 한 번에.</p>
-      <div class="hero-actions"><button id="goUpload" class="primary big">＋ 자료 추가</button><button class="secondary" data-go="quiz">문제 풀기</button></div>
+  <section class="card intro-card">
+    <div class="section-title"><div class="section-icon">✨</div><div><h2>빠르게 시작하기</h2><p>교과서, 학습지, 프린트 이미지를 올리면 바로 학습 자료로 바꿔줍니다.</p></div></div>
+    <div class="quick-grid">
+      <button id="goUpload" class="quick-action"><span class="quick-icon">📄</span><strong>자료 업로드</strong><small>PDF · 이미지</small></button>
+      <button class="quick-action" data-go="quiz"><span class="quick-icon">📝</span><strong>문제 만들기</strong><small>객관식 · 서술형</small></button>
+      <button class="quick-action" data-go="analysis"><span class="quick-icon">📊</span><strong>학습 분석</strong><small>취약 개념 확인</small></button>
     </div>
-    <div class="flow-card">
-      <div class="flow-step"><b>01</b><div><strong>자료 업로드</strong><small>PDF · 이미지</small></div><span>→</span></div>
-      <div class="flow-step"><b>02</b><div><strong>AI 요약</strong><small>핵심 개념 정리</small></div><span>→</span></div>
-      <div class="flow-step"><b>03</b><div><strong>문제 풀이</strong><small>객관식 · 서술형</small></div><span>→</span></div>
-      <div class="flow-step"><b>04</b><div><strong>취약점 분석</strong><small>오답 유형 추적</small></div></div>
-    </div>
-  </div>
-  <div class="dashboard">
-    <section class="panel"><div class="panel-title"><div><small>LIBRARY</small><h2>최근 자료</h2></div><button class="link" data-go="materials">전체 보기 →</button></div><div id="recentMaterials" class="empty-state"><span>▤</span><b>아직 자료가 없다</b><small>첫 학습자료를 추가해 보자.</small></div></section>
-    <section class="panel"><div class="panel-title"><div><small>WEAK POINTS</small><h2>취약 개념</h2></div><button class="link" data-go="analysis">분석 보기 →</button></div><div id="weakConcepts" class="empty-state"><span>◎</span><b>분석 대기 중</b><small>문제를 풀면 취약점이 표시된다.</small></div></section>
+  </section>
+  <div class="two-col">
+    <section class="card"><div class="card-head"><div><h3>📚 최근 자료</h3><p>최근에 추가한 학습자료입니다.</p></div><button class="text-link" data-go="materials">전체 보기</button></div><div id="recentMaterials" class="empty-state"><b>아직 자료가 없습니다.</b><span>첫 학습자료를 추가해보세요.</span></div></section>
+    <section class="card"><div class="card-head"><div><h3>🎯 취약 개념</h3><p>문제를 풀면 자동으로 분석됩니다.</p></div><button class="text-link" data-go="analysis">분석 보기</button></div><div id="weakConcepts" class="empty-state"><b>분석 데이터가 없습니다.</b><span>문제를 풀고 취약점을 확인해보세요.</span></div></section>
   </div>
 </section>
 
 <section id="materialsView" class="view hidden">
- <div class="page-head"><div><span class="pill">LIBRARY</span><h1>학습 자료</h1><p>교과서, 학습지, 프린트를 한곳에서 관리한다.</p></div><label class="primary" for="fileInput">＋ 자료 추가</label><input id="fileInput" hidden type="file" accept="image/*,.pdf,application/pdf"></div>
- <div id="uploadStatus" class="status"></div>
- <section class="panel library"><div class="panel-title"><h2>내 자료</h2><span class="hint">PDF · PNG · JPG · WEBP · HEIC</span></div><div id="materialsList" class="empty-state"><span>▤</span><b>자료가 없다</b><small>오른쪽 위에서 파일을 추가해라.</small></div></section>
- <div id="workspace" class="workspace hidden">
-   <section class="panel"><div class="panel-title"><div><small>ORIGINAL</small><h2>원본</h2><p id="selectedFilename" class="hint"></p></div></div><div id="preview" class="preview"></div></section>
-   <section class="panel note-panel"><div class="panel-title sticky-title"><div><small>AI NOTE</small><h2>요약 노트</h2></div><button id="analyzeBtn" class="primary small">✦ AI 분석</button></div><div id="note" class="note empty-state"><span>✦</span><b>아직 요약하지 않았다</b><small>AI 분석을 누르면 핵심 내용을 정리한다.</small></div></section>
- </div>
+  <section class="card">
+    <div class="section-title"><div class="section-icon">🏫</div><div><h2>학습자료</h2><p>교과서, 학습지, 프린트를 업로드하세요.</p></div></div>
+    <label class="upload-box" for="fileInput"><div class="upload-icon">⬆</div><strong>파일을 선택하거나 눌러서 업로드</strong><span>PDF / PNG / JPG / WEBP / HEIC · 최대 15MB</span></label>
+    <input id="fileInput" hidden type="file" accept="image/*,.pdf,application/pdf"><div id="uploadStatus" class="status"></div>
+  </section>
+  <section class="card"><div class="card-head"><div><h3>📁 내 자료</h3><p>업로드한 자료 목록</p></div></div><div id="materialsList" class="empty-state"><b>자료가 없습니다.</b><span>위에서 파일을 추가해보세요.</span></div></section>
+  <div id="workspace" class="workspace hidden">
+    <section class="card"><div class="card-head"><div><h3>📖 원본</h3><p id="selectedFilename"></p></div></div><div id="preview" class="preview"></div></section>
+    <section class="card"><div class="card-head"><div><h3>✨ AI 요약 노트</h3><p>핵심 개념과 시험 포인트를 정리합니다.</p></div><button id="analyzeBtn" class="primary">AI 분석</button></div><div id="note" class="note empty-state"><b>아직 분석하지 않았습니다.</b><span>AI 분석 버튼을 눌러 요약 노트를 만드세요.</span></div></section>
+  </div>
 </section>
 
 <section id="quizView" class="view hidden">
- <div class="page-head"><div><span class="pill">QUIZ</span><h1>문제 만들기</h1><p>원하는 방식으로 문제 세트를 만든다.</p></div></div>
- <section class="panel builder">
-  <div class="controls">
-   <label><span>학습 자료</span><select id="quizMaterial"></select></label>
-   <label><span>문제 수</span><input id="quizCount" type="number" min="1" max="30" value="10"></label>
-   <label><span>객관식 비율 <em id="mcqLabel">70%</em></span><input id="mcqPercent" type="range" min="0" max="100" step="10" value="70"></label>
-   <label><span>난이도</span><select id="difficulty"><option value="mixed">혼합</option><option value="easy">쉬움</option><option value="normal">보통</option><option value="hard">어려움</option></select></label>
-  </div>
-  <div class="builder-bottom"><span id="quizStatus" class="status"></span><button id="generateQuiz" class="primary">✦ 문제 생성</button></div>
- </section>
- <form id="quizForm" class="quiz-stack hidden"></form><div id="resultPanel" class="panel result hidden"></div>
+  <section class="card">
+    <div class="section-title"><div class="section-icon">📝</div><div><h2>문제 만들기</h2><p>학습자료 범위 안에서 원하는 방식으로 문제를 생성합니다.</p></div></div>
+    <div class="form-grid">
+      <label><span>학습자료</span><select id="quizMaterial"></select></label>
+      <label><span>문제 수</span><input id="quizCount" type="number" min="1" max="30" value="10"></label>
+      <label><span>객관식 비율 <em id="mcqLabel">70%</em></span><input id="mcqPercent" type="range" min="0" max="100" step="10" value="70"></label>
+      <label><span>난이도</span><select id="difficulty"><option value="mixed">혼합</option><option value="easy">쉬움</option><option value="normal">보통</option><option value="hard">어려움</option></select></label>
+    </div>
+    <div class="action-row"><span id="quizStatus" class="status"></span><button id="generateQuiz" class="primary big">문제 생성</button></div>
+  </section>
+  <form id="quizForm" class="quiz-stack hidden"></form><div id="resultPanel" class="card hidden"></div>
 </section>
 
 <section id="analysisView" class="view hidden">
- <div class="page-head"><div><span class="pill">INSIGHT</span><h1>학습 분석</h1><p>틀린 문제를 모아 약한 개념부터 보여준다.</p></div></div>
- <div class="analysis-grid">
-  <section class="panel"><div class="panel-title"><div><small>MASTERY</small><h2>개념 숙련도</h2></div></div><div id="masteryList" class="empty-state"><span>◔</span><b>데이터가 없다</b><small>문제를 풀면 이곳에 분석 결과가 쌓인다.</small></div></section>
-  <aside class="panel tips"><small>STUDY TIP</small><h2>복습 순서</h2><p>숙련도가 낮은 개념부터 다시 보고, 틀린 문제를 한 번 더 풀어라.</p><div class="tip-line"><b>1</b><span>취약 개념 확인</span></div><div class="tip-line"><b>2</b><span>요약 노트 복습</span></div><div class="tip-line"><b>3</b><span>문제 재도전</span></div></aside>
- </div>
+  <section class="card">
+    <div class="section-title"><div class="section-icon">📊</div><div><h2>학습 분석</h2><p>개념별 숙련도와 취약점을 확인합니다.</p></div></div>
+    <div id="masteryList" class="empty-state"><b>아직 분석 데이터가 없습니다.</b><span>문제를 풀면 개념별 숙련도가 표시됩니다.</span></div>
+  </section>
 </section>
 </main>
 </div><script src="/static/app.js"></script>
