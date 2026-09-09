@@ -22,13 +22,24 @@ CREATE TABLE IF NOT EXISTS materials (
     created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS researches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    grade TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    scope TEXT NOT NULL,
+    research_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS quizzes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    material_id INTEGER NOT NULL,
+    material_id INTEGER,
+    research_id INTEGER,
     title TEXT NOT NULL,
     questions_json TEXT NOT NULL,
     created_at TEXT NOT NULL,
-    FOREIGN KEY(material_id) REFERENCES materials(id) ON DELETE CASCADE
+    FOREIGN KEY(material_id) REFERENCES materials(id) ON DELETE SET NULL,
+    FOREIGN KEY(research_id) REFERENCES researches(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS attempts (

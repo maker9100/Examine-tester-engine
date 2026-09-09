@@ -8,7 +8,7 @@
 *{box-sizing:border-box}
 :root{
   --bg:#f2f3f7;--card:#fff;--text:#25262b;--sub:#747a88;--line:#e1e4ec;
-  --purple:#6843eb;--purple2:#7e38f2;--soft:#f8f9fc;
+  --purple:#6843eb;--purple2:#7e38f2;--soft:#f8f9fc;--green:#218b5a;
   font-family:"서초바탕","SeochoBatang","AppleMyungjo","Noto Serif KR","Batang",serif;
   font-synthesis:none
 }
@@ -16,16 +16,11 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
 body{text-align:center}
 button,input,select,textarea{font:inherit}
 button,label{cursor:pointer}
-.shell{width:min(820px,calc(100% - 24px));margin:auto;padding:20px 0 110px}
-
-.hero{
-  background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;
-  border-radius:24px;padding:28px 20px 24px;box-shadow:0 16px 40px rgba(101,68,225,.2)
-}
+.shell{width:min(860px,calc(100% - 24px));margin:auto;padding:20px 0 110px}
+.hero{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border-radius:24px;padding:28px 20px 24px;box-shadow:0 16px 40px rgba(101,68,225,.2)}
 .hero h1{font-size:45px;letter-spacing:-.05em;margin:0}
-.hero p{font-size:14px;line-height:1.65;color:#f0ecff;margin:11px auto 18px;max-width:540px}
+.hero p{font-size:14px;line-height:1.65;color:#f0ecff;margin:11px auto 18px;max-width:590px}
 .hero button{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:10px 20px;font-weight:700}
-
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 7px 24px rgba(33,40,55,.04);margin-bottom:14px}
 .card h2{margin:0 0 14px;font-size:24px;letter-spacing:-.03em}
@@ -33,32 +28,33 @@ button,label{cursor:pointer}
 .center{text-align:center}
 .left,.left *{text-align:left!important}
 .hidden{display:none!important}
-
-.upload-btn,.primary,.soft-btn{
-  border:0;border-radius:12px;padding:10px 15px;font-weight:700
-}
+.upload-btn,.primary,.soft-btn,.web-btn{border:0;border-radius:12px;padding:10px 15px;font-weight:700}
 .upload-btn,.primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:white}
 .soft-btn{background:#eef0f4;color:#5f6673}
-.primary:disabled{opacity:.45}
+.web-btn{background:#eaf7f1;color:var(--green);border:1px solid #cdebdc}
+.primary:disabled,.web-btn:disabled{opacity:.45}
 .status{min-height:18px;margin-top:8px;color:#7f8591;font-size:12px}
-
 .list{display:grid;gap:8px}
 .empty{color:#9aa0ab;padding:16px 4px;line-height:1.55}
 .material{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-bottom:1px solid #edf0f4}
 .material:last-child{border-bottom:0}
 .material button{border:0;background:none;font-weight:700;text-align:center}
 .badge{font-size:10px;background:#f0f1f5;border-radius:999px;padding:4px 7px;color:#737987}
-
-.settings{display:grid;gap:11px}
+.settings{display:grid;gap:10px}
 .settings label{display:grid;gap:6px;font-size:13px;font-weight:700;color:#555c69}
 .settings label span{text-align:center}
 .range{display:grid;grid-template-columns:1fr 44px;align-items:center;gap:7px}
 .range em{font-style:normal;color:var(--purple)}
 input,select,textarea{width:100%;border:1px solid #d9deea;background:#fbfcff;border-radius:11px;padding:10px 11px;color:var(--text)}
-select,input[type=number]{text-align:center;text-align-last:center}
+select,input[type=number],input[type=text]{text-align:center;text-align-last:center}
 input[type=range]{padding:0;accent-color:var(--purple)}
-textarea{text-align:left;min-height:110px;resize:vertical}
-
+.scope-input{min-height:86px;text-align:center;resize:vertical}
+.study-answer{min-height:110px;resize:vertical;text-align:left}
+.research-box{margin-top:12px;padding:13px;border-radius:13px;background:#f4fbf8;border:1px solid #d8eee4;font-size:12px;line-height:1.6}
+.research-box h3{font-size:15px;margin:0 0 7px}
+.research-box .concepts{margin-top:8px}
+.source-list{display:grid;gap:6px;margin-top:9px}
+.source-list a{color:#3866aa;word-break:break-all;text-decoration:none}
 .full{margin-top:14px}
 .study-title{text-align:left}
 .study-title h2{text-align:left}
@@ -66,6 +62,7 @@ textarea{text-align:left;min-height:110px;resize:vertical}
 .qcard{background:#fafbfe;border:1px solid #eceff4;border-radius:15px;padding:16px;text-align:left}
 .qcard h3{font-size:17px;line-height:1.55;margin:0 0 5px}
 .muted{font-size:12px;color:var(--sub)}
+.origin{display:inline-block;margin:3px 0 7px;padding:4px 7px;border-radius:999px;background:#eeeaff;color:#6556a9;font-size:10px}
 .choice{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0f4}
 .choice input{width:auto;margin-top:4px}
 .result{line-height:1.65}
@@ -77,79 +74,107 @@ textarea{text-align:left;min-height:110px;resize:vertical}
 .mastery{display:grid;grid-template-columns:105px 1fr 42px;gap:9px;align-items:center;padding:7px 0}
 .bar{height:8px;background:#e9ebf0;border-radius:999px;overflow:hidden}
 .bar i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--purple),#9b83f6)}
-
 .workspace{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .preview{min-height:390px;background:#eef0f4;border-radius:13px;overflow:hidden}
 .preview img,.preview iframe{display:block;width:100%;height:56vh;min-height:390px;border:0;object-fit:contain}
 .note{line-height:1.72}
-.note h2{font-size:23px}.note h3{font-size:16px;margin:22px 0 7px}
+.note h2{font-size:23px}
+.note h3{font-size:16px;margin:22px 0 7px}
 .note ul{padding-left:20px}
 .note-box{background:#fafbfe;border:1px solid #eceff4;border-radius:11px;padding:11px;margin:8px 0}
-
-.bottom{
-  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);
-  width:min(790px,calc(100% - 24px));display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
-  background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:19px;
-  padding:7px;box-shadow:0 12px 35px rgba(25,30,42,.13);backdrop-filter:blur(14px)
-}
+.bottom{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(830px,calc(100% - 24px));display:grid;grid-template-columns:repeat(4,1fr);gap:5px;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:19px;padding:7px;box-shadow:0 12px 35px rgba(25,30,42,.13);backdrop-filter:blur(14px)}
 .bottom button{border:0;background:transparent;color:#757b87;padding:10px 5px;border-radius:13px;font-weight:700}
 .bottom button.active{background:#eeeaff;color:var(--purple)}
-
-@media(max-width:680px){
+@media(max-width:700px){
   .shell{width:calc(100% - 18px);padding-top:10px}
-  .hero{border-radius:20px;padding:24px 16px 21px}.hero h1{font-size:38px}
+  .hero{border-radius:20px;padding:24px 16px 21px}
+  .hero h1{font-size:38px}
   .grid2,.workspace,.feedback-grid{grid-template-columns:1fr}
   .card{border-radius:18px;padding:16px}
   .preview img,.preview iframe{height:45vh;min-height:300px}
 }
+
 </style>
 </head>
 <body>
+
 <div class="shell">
 <header class="hero">
   <h1>EDU AI</h1>
-  <p>학습자료를 요약하고 문제를 만들고 오답을 분석하는 AI 학습 도구</p>
+  <p>학습자료 + 시험범위 웹 분석 + GPT 문제 생성 + 오답 분석</p>
   <button id="startBtn">학습 시작</button>
 </header>
 
 <section id="home">
-  <div class="grid2">
-    <section class="card center">
-      <div class="kicker">자료</div><h2>자료</h2>
-      <label class="upload-btn" for="file1">+ 자료 추가</label>
-      <input id="file1" type="file" hidden accept="image/*,.pdf,application/pdf">
-      <div id="uploadStatus" class="status"></div>
-      <div id="recentMaterials" class="list empty">아직 자료가 없다.</div>
-      <button id="allMaterialsBtn" class="soft-btn">전체 자료 보기</button>
-    </section>
-
-    <section class="card center">
-      <div class="kicker">문제 설정</div><h2>문제 설정</h2>
-      <div class="settings">
-        <label><span>자료</span><select id="quizMaterial"></select></label>
-        <label><span>문제 수</span><input id="quizCount" type="number" min="1" max="30" value="10"></label>
-        <label><span>객관식 비율</span><div class="range"><input id="mcqPercent" type="range" min="0" max="100" step="10" value="70"><em id="mcqLabel">70%</em></div></label>
-        <label><span>난이도</span><select id="difficulty"><option value="mixed">혼합</option><option value="easy">쉬움</option><option value="normal">보통</option><option value="hard">어려움</option></select></label>
-      </div>
-      <div style="margin-top:14px"><button id="generateQuiz" class="primary">문제 생성</button></div>
-      <div id="quizStatus" class="status"></div>
-    </section>
-  </div>
-
-  <section id="quizSection" class="card full left">
-    <div class="kicker">문제 및 오답노트</div>
-    <div class="study-title"><h2>문제 및 오답노트</h2></div>
-    <form id="quizForm" class="quiz hidden"></form>
-    <div id="resultPanel" class="result empty left">생성된 문제가 여기에 표시된다.<br>채점 후 틀린 문제와 해설도 여기서 확인한다.</div>
+<div class="grid2">
+  <section class="card center">
+    <div class="kicker">자료</div><h2>자료</h2>
+    <label class="upload-btn" for="file1">+ 자료 추가</label>
+    <input id="file1" type="file" hidden accept="image/*,.pdf,application/pdf">
+    <div id="uploadStatus" class="status"></div>
+    <div id="recentMaterials" class="list empty">아직 자료가 없다.</div>
+    <button id="allMaterialsBtn" class="soft-btn">전체 자료 보기</button>
   </section>
 
-  <section id="feedbackSection" class="card full center">
-    <div class="kicker">피드백</div><h2>피드백</h2>
-    <div class="feedback-grid">
-      <div class="feedback-box center"><h3>취약 개념</h3><div id="weakConcepts" class="list empty center">문제를 풀면 분석된다.</div></div>
-      <div class="feedback-box center"><h3>개념 숙련도</h3><div id="masteryList" class="list empty center">아직 분석 데이터가 없다.</div></div>
+  <section class="card center">
+    <div class="kicker">문제 설정</div><h2>문제 설정</h2>
+    <div class="settings">
+      <label><span>업로드 자료</span><select id="quizMaterial"></select></label>
+      <label><span>학년</span>
+        <select id="grade">
+          <option>중1</option><option>중2</option><option>중3</option>
+          <option selected>고1</option><option>고2</option><option>고3</option>
+        </select>
+      </label>
+      <label><span>과목</span><input id="subject" type="text" placeholder="예: 공통수학1"></label>
+      <label><span>시험범위</span><textarea id="scope" class="scope-input" placeholder="예: 다항식, 항등식과 나머지정리, 여러 가지 방정식"></textarea></label>
+      <button id="researchBtn" class="web-btn">🌐 공개 기출·모의고사 경향 분석</button>
+      <div id="researchStatus" class="status"></div>
+      <div id="researchResult" class="research-box hidden"></div>
+      <label><span>문제 수</span><input id="quizCount" type="number" min="1" max="30" value="10"></label>
+      <label><span>객관식 비율</span>
+        <div class="range">
+          <input id="mcqPercent" type="range" min="0" max="100" step="10" value="70">
+          <em id="mcqLabel">70%</em>
+        </div>
+      </label>
+      <label><span>난이도</span>
+        <select id="difficulty">
+          <option value="mixed">혼합</option>
+          <option value="easy">쉬움</option>
+          <option value="normal">보통</option>
+          <option value="hard">어려움</option>
+        </select>
+      </label>
     </div>
+    <div style="margin-top:14px"><button id="generateQuiz" class="primary">문제 생성</button></div>
+    <div id="quizStatus" class="status"></div>
   </section>
+</div>
+
+<section id="quizSection" class="card full left">
+  <div class="kicker">문제 및 오답노트</div>
+  <div class="study-title"><h2>문제 및 오답노트</h2></div>
+  <form id="quizForm" class="quiz hidden"></form>
+  <div id="resultPanel" class="result empty left">
+    생성된 문제가 여기에 표시된다.<br>
+    채점 후 틀린 문제와 해설도 여기서 확인한다.
+  </div>
+</section>
+
+<section id="feedbackSection" class="card full center">
+  <div class="kicker">피드백</div><h2>피드백</h2>
+  <div class="feedback-grid">
+    <div class="feedback-box center">
+      <h3>취약 개념</h3>
+      <div id="weakConcepts" class="list empty center">문제를 풀면 분석된다.</div>
+    </div>
+    <div class="feedback-box center">
+      <h3>개념 숙련도</h3>
+      <div id="masteryList" class="list empty center">아직 분석 데이터가 없다.</div>
+    </div>
+  </div>
+</section>
 </section>
 
 <section id="materialsPage" class="hidden">
@@ -166,12 +191,13 @@ textarea{text-align:left;min-height:110px;resize:vertical}
       <div id="selectedFilename" class="muted"></div>
       <div id="preview" class="preview"></div>
     </section>
+
     <section class="card left">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <div><div class="kicker">요약 노트</div><h2 style="text-align:left;margin:0">AI 요약</h2></div>
-        <button id="analyzeBtn" class="primary">AI 분석</button>
+        <button id="analyzeBtn" class="primary">GPT 분석</button>
       </div>
-      <div id="note" class="note empty left">자료를 선택하고 AI 분석을 눌러라.</div>
+      <div id="note" class="note empty left">자료를 선택하고 GPT 분석을 눌러라.</div>
     </section>
   </div>
 </section>
@@ -185,8 +211,8 @@ textarea{text-align:left;min-height:110px;resize:vertical}
 </nav>
 
 <script>
-let materials=[], selectedMaterial=null, currentQuiz=null;
-const demoMode = location.hostname.endsWith("github.io");
+let materials=[], selectedMaterial=null, currentQuiz=null, currentResearch=null;
+const demoMode=location.hostname.endsWith("github.io");
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -202,8 +228,14 @@ async function api(url,opt={}){
 function setNav(n){
   document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));
 }
-function showHome(){ $("home").classList.remove("hidden"); $("materialsPage").classList.add("hidden"); setNav("home"); scrollTo({top:0,behavior:"smooth"}); }
-function showMaterials(){ $("home").classList.add("hidden"); $("materialsPage").classList.remove("hidden"); setNav("materials"); scrollTo({top:0,behavior:"smooth"}); }
+function showHome(){
+  $("home").classList.remove("hidden"); $("materialsPage").classList.add("hidden");
+  setNav("home"); scrollTo({top:0,behavior:"smooth"});
+}
+function showMaterials(){
+  $("home").classList.add("hidden"); $("materialsPage").classList.remove("hidden");
+  setNav("materials"); scrollTo({top:0,behavior:"smooth"});
+}
 function gotoQuiz(){ showHome(); setNav("quiz"); $("quizSection").scrollIntoView({behavior:"smooth"}); }
 function gotoAnalysis(){ showHome(); setNav("analysis"); $("feedbackSection").scrollIntoView({behavior:"smooth"}); }
 
@@ -232,23 +264,28 @@ function renderMaterials(){
 }
 function fillSelect(){
   const ready=materials.filter(m=>m.status==="ready");
-  $("quizMaterial").innerHTML=ready.length?ready.map(m=>`<option value="${m.id}">${esc(m.title||m.filename)}</option>`).join(""):`<option value="">먼저 자료를 분석해라</option>`;
+  $("quizMaterial").innerHTML=`<option value="">업로드 자료 없이 시험범위로 생성</option>`+
+    ready.map(m=>`<option value="${m.id}">${esc(m.title||m.filename)}</option>`).join("");
 }
-async function upload(fileInput){
-  const f=fileInput.files?.[0]; if(!f)return;
+
+async function upload(inp){
+  const f=inp.files?.[0]; if(!f)return;
   $("uploadStatus").textContent="업로드 중...";
   try{
     if(demoMode){
       const id=Date.now(),url=URL.createObjectURL(f);
       materials.unshift({id,filename:f.name,title:f.name,mime_type:f.type||"image/jpeg",status:"uploaded",_url:url});
-      renderMaterials();fillSelect();
+      renderMaterials(); fillSelect();
     }else{
-      const fd=new FormData();fd.append("file",f);
-      await api("/api/materials",{method:"POST",body:fd}); await loadMaterials();
+      const fd=new FormData(); fd.append("file",f);
+      await api("/api/materials",{method:"POST",body:fd});
+      await loadMaterials();
     }
     $("uploadStatus").textContent="업로드 완료.";
-  }catch(e){$("uploadStatus").textContent=e.message}
-  fileInput.value="";
+  }catch(e){
+    $("uploadStatus").textContent=e.message;
+  }
+  inp.value="";
 }
 $("file1").onchange=()=>upload($("file1"));
 $("file2").onchange=()=>upload($("file2"));
@@ -256,89 +293,242 @@ $("file2").onchange=()=>upload($("file2"));
 async function openMaterial(id){
   selectedMaterial=demoMode?materials.find(m=>m.id===id):await api(`/api/materials/${id}`);
   if(!selectedMaterial)return;
-  showMaterials(); $("workspace").classList.remove("hidden"); $("selectedFilename").textContent=selectedMaterial.filename||"";
+  showMaterials(); $("workspace").classList.remove("hidden");
+  $("selectedFilename").textContent=selectedMaterial.filename||"";
   const url=demoMode?selectedMaterial._url:`/api/materials/${id}/file`;
-  $("preview").innerHTML=(selectedMaterial.mime_type||"").startsWith("image/")?`<img src="${url}">`:`<iframe src="${url}"></iframe>`;
-  selectedMaterial.summary?renderNote(selectedMaterial.summary):$("note").innerHTML="자료를 선택하고 AI 분석을 눌러라.";
+  $("preview").innerHTML=(selectedMaterial.mime_type||"").startsWith("image/")
+    ?`<img src="${url}" alt="학습자료">`
+    :`<iframe src="${url}" title="PDF"></iframe>`;
+  selectedMaterial.summary?renderNote(selectedMaterial.summary):$("note").innerHTML="자료를 선택하고 GPT 분석을 눌러라.";
 }
 
 $("analyzeBtn").onclick=async()=>{
   if(!selectedMaterial)return alert("먼저 자료를 선택해라.");
-  $("analyzeBtn").disabled=true;$("analyzeBtn").textContent="분석 중...";
+  $("analyzeBtn").disabled=true; $("analyzeBtn").textContent="분석 중...";
   try{
     let note;
     if(demoMode){
       await sleep(350);
-      note={title:selectedMaterial.filename,subject:"데모 과목",chapter:"UI 테스트",summary:"GitHub Pages 데모 요약이다. FastAPI로 실행하면 실제 업로드 자료를 AI가 분석한다.",key_points:["요약 노트는 좌측 정렬","문제와 오답노트도 좌측 정렬","그 외 UI는 가운데 정렬"],formulas:[],terms:[{term:"EDU AI",definition:"학습자료 요약·문제 생성·오답 분석 웹앱"}],study_tips:["실제 AI 기능은 FastAPI 서버에서 사용한다."]};
+      note={
+        title:selectedMaterial.filename,subject:"데모 과목",chapter:"GPT UI 테스트",
+        summary:"GitHub Pages 데모 요약이다. 실제 서버에서는 OpenAI GPT가 업로드 자료를 분석한다.",
+        key_points:["문제·오답노트·요약노트 좌측 정렬","나머지 UI 가운데 정렬"],
+        formulas:[],terms:[{term:"EDU AI",definition:"GPT 기반 학습 웹앱"}],
+        study_tips:["실제 GPT 분석은 FastAPI/Render에서 실행한다."]
+      };
       selectedMaterial.summary=note; selectedMaterial.status="ready";
-      renderMaterials();fillSelect();
-    }else{note=await api(`/api/materials/${selectedMaterial.id}/analyze`,{method:"POST"});await loadMaterials()}
+      renderMaterials(); fillSelect();
+    }else{
+      note=await api(`/api/materials/${selectedMaterial.id}/analyze`,{method:"POST"});
+      await loadMaterials();
+    }
     renderNote(note);
   }catch(e){alert(e.message)}
-  finally{$("analyzeBtn").disabled=false;$("analyzeBtn").textContent="AI 분석"}
+  finally{$("analyzeBtn").disabled=false;$("analyzeBtn").textContent="GPT 분석"}
 };
 
 function renderNote(n){
   $("note").className="note left";
-  $("note").innerHTML=`<h2>${esc(n.title||"요약노트")}</h2><p class="muted">${esc(n.subject||"")}${n.chapter?` · ${esc(n.chapter)}`:""}</p><p>${esc(n.summary||"")}</p>
+  $("note").innerHTML=`<h2>${esc(n.title||"요약노트")}</h2>
+  <p class="muted">${esc(n.subject||"")}${n.chapter?` · ${esc(n.chapter)}`:""}</p>
+  <p>${esc(n.summary||"")}</p>
   <h3>핵심 개념</h3><ul>${(n.key_points||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
   ${(n.formulas||[]).length?`<h3>공식 / 법칙</h3>${n.formulas.map(f=>`<div class="note-box"><strong>${esc(f.name)}</strong><br>${esc(f.expression)}<br><span class="muted">${esc(f.meaning)}</span></div>`).join("")}`:""}
   ${(n.terms||[]).length?`<h3>용어</h3><ul>${n.terms.map(t=>`<li><strong>${esc(t.term)}</strong> — ${esc(t.definition)}</li>`).join("")}</ul>`:""}
   <h3>시험에서 주의할 점</h3><ul>${(n.study_tips||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
 }
 
+$("researchBtn").onclick=async()=>{
+  const grade=$("grade").value, subject=$("subject").value.trim(), scope=$("scope").value.trim();
+  if(!subject||!scope){
+    $("researchStatus").textContent="과목과 시험범위를 입력해라.";
+    return;
+  }
+  $("researchBtn").disabled=true;
+  $("researchStatus").textContent="공개 기출·모의고사 경향 검색 중...";
+  try{
+    currentResearch=await api("/api/research",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({grade,subject,scope})
+    });
+    renderResearch(currentResearch);
+    $("researchStatus").textContent="웹 분석 완료.";
+  }catch(e){
+    $("researchStatus").textContent=e.message;
+  }finally{
+    $("researchBtn").disabled=false;
+  }
+};
+
+function renderResearch(r){
+  $("researchResult").classList.remove("hidden");
+  const concepts=(r.important_concepts||[]).slice(0,5)
+    .map(x=>`${esc(x.concept)} (${esc(x.reason||"")})`).join("<br>");
+  const sources=(r.sources||[]).slice(0,6)
+    .map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a>`).join("");
+  $("researchResult").innerHTML=`<h3>웹 분석 결과</h3>
+    <div>${esc(r.summary||"")}</div>
+    ${concepts?`<div class="concepts"><strong>중요 개념</strong><br>${concepts}</div>`:""}
+    ${sources?`<div class="source-list"><strong>확인한 공개 출처</strong>${sources}</div>`:""}
+    <div style="margin-top:8px;color:#6f7b75">${esc(r.copyright_note||"문제 원문 복제 대신 기출 유형을 변형한다.")}</div>`;
+}
+
 $("generateQuiz").onclick=async()=>{
-  const material_id=+$("quizMaterial").value;if(!material_id){$("quizStatus").textContent="분석된 자료가 필요하다.";return}
-  $("generateQuiz").disabled=true;$("quizStatus").textContent="문제 생성 중...";
+  const material_id=+$("quizMaterial").value||null;
+  const research_id=currentResearch?.research_id||null;
+  if(!material_id&&!research_id){
+    $("quizStatus").textContent="자료를 분석하거나 시험범위 웹 분석을 먼저 실행해라.";
+    return;
+  }
+  $("generateQuiz").disabled=true;
+  $("quizStatus").textContent="GPT가 문제 생성 중...";
   try{
     if(demoMode){
       const n=Math.min(+$("quizCount").value||5,10),m=+$("mcqPercent").value;
-      currentQuiz={quiz_id:1,title:"EDU AI 데모 문제",questions:Array.from({length:n},(_,i)=>({id:`q${i+1}`,type:i<Math.round(n*m/100)?"multiple_choice":"short_answer",concept:i%2?"핵심 개념":"자료 이해",difficulty:(i%3)+1,question:i<Math.round(n*m/100)?`${i+1}번. EDU AI의 학습 흐름으로 맞는 것은?`:`${i+1}번. EDU AI의 학습 흐름을 간단히 설명하시오.`,choices:i<Math.round(n*m/100)?["영상 편집","자료 → 요약 → 문제 → 오답 분석","게임 실행","음악 재생"]:[]}))};
+      currentQuiz={
+        quiz_id:1,title:"EDU AI GPT 데모 문제",
+        questions:Array.from({length:n},(_,i)=>({
+          id:`q${i+1}`,
+          type:i<Math.round(n*m/100)?"multiple_choice":"short_answer",
+          concept:i%2?"핵심 개념":"시험범위",
+          difficulty:(i%3)+1,
+          origin:i%3===0?"공개 기출 유형 변형":"AI 신규",
+          source_hint:"공개 출제 경향 기반 데모",
+          question:i<Math.round(n*m/100)
+            ?`${i+1}번. EDU AI의 학습 흐름으로 맞는 것은?`
+            :`${i+1}번. 시험범위 학습 흐름을 간단히 설명하시오.`,
+          choices:i<Math.round(n*m/100)
+            ?["영상 편집","자료 → 분석 → 문제 → 오답 분석","게임 실행","음악 재생"]:[]
+        }))
+      };
     }else{
-      currentQuiz=await api("/api/quizzes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({material_id,count:+$("quizCount").value,mcq_percent:+$("mcqPercent").value,difficulty:$("difficulty").value})});
+      currentQuiz=await api("/api/quizzes",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          material_id,research_id,
+          count:+$("quizCount").value,
+          mcq_percent:+$("mcqPercent").value,
+          difficulty:$("difficulty").value
+        })
+      });
     }
-    renderQuiz();$("quizStatus").textContent="";gotoQuiz();
-  }catch(e){$("quizStatus").textContent=e.message}
-  finally{$("generateQuiz").disabled=false}
+    renderQuiz(); $("quizStatus").textContent=""; gotoQuiz();
+  }catch(e){
+    $("quizStatus").textContent=e.message;
+  }finally{
+    $("generateQuiz").disabled=false;
+  }
 };
 
 function renderQuiz(){
   $("quizForm").classList.remove("hidden");
   $("resultPanel").innerHTML="";
   $("quizForm").innerHTML=`<div class="qcard"><h2>${esc(currentQuiz.title)}</h2><p class="muted">${currentQuiz.questions.length}문제</p></div>
-  ${currentQuiz.questions.map((q,i)=>`<div class="qcard"><h3>${i+1}. ${esc(q.question)}</h3><p class="muted">${esc(q.concept)} · 난이도 ${q.difficulty}</p>${q.type==="multiple_choice"?(q.choices||[]).map((c,j)=>`<label class="choice"><input type="radio" name="${q.id}" value="${j}"><span>${j+1}. ${esc(c)}</span></label>`).join(""):`<textarea name="${q.id}" placeholder="답안을 입력"></textarea>`}</div>`).join("")}
+  ${currentQuiz.questions.map((q,i)=>`<div class="qcard">
+    <h3>${i+1}. ${esc(q.question)}</h3>
+    <span class="origin">${esc(q.origin||"AI 신규")}</span>
+    <p class="muted">${esc(q.concept||"")} · 난이도 ${q.difficulty}${q.source_hint?` · ${esc(q.source_hint)}`:""}</p>
+    ${q.type==="multiple_choice"
+      ?(q.choices||[]).map((c,j)=>`<label class="choice"><input type="radio" name="${q.id}" value="${j}"><span>${j+1}. ${esc(c)}</span></label>`).join("")
+      :`<textarea class="study-answer" name="${q.id}" placeholder="답안을 입력"></textarea>`}
+  </div>`).join("")}
   <button type="submit" class="primary">채점하기</button>`;
 }
 
 $("quizForm").onsubmit=async e=>{
-  e.preventDefault();const fd=new FormData(e.target),answers={};
-  currentQuiz.questions.forEach(q=>{const v=fd.get(q.id);answers[q.id]=q.type==="multiple_choice"&&v!==null?+v:(v??"")});
-  const b=e.target.querySelector("[type=submit]");b.disabled=true;b.textContent="채점 중...";
+  e.preventDefault();
+  const fd=new FormData(e.target),answers={};
+  currentQuiz.questions.forEach(q=>{
+    const v=fd.get(q.id);
+    answers[q.id]=q.type==="multiple_choice"&&v!==null?+v:(v??"");
+  });
+  const b=e.target.querySelector("[type=submit]");
+  b.disabled=true; b.textContent="채점 중...";
   try{
     let d;
     if(demoMode){
       await sleep(250);
-      const results=currentQuiz.questions.map(q=>{const a=answers[q.id],ok=q.type==="multiple_choice"?+a===1:String(a||"").trim().length>5;return{id:q.id,concept:q.concept,correct:ok,score:ok?1:0,feedback:ok?"정답이다.":"핵심 흐름을 다시 확인해라.",explanation:"자료 → 요약 → 문제 → 오답 분석",error_type:ok?null:"개념 이해 부족"}});
+      const results=currentQuiz.questions.map(q=>{
+        const a=answers[q.id], ok=q.type==="multiple_choice"?+a===1:String(a||"").trim().length>5;
+        return {
+          id:q.id,concept:q.concept,correct:ok,score:ok?1:0,
+          feedback:ok?"정답이다.":"핵심 개념을 다시 확인해라.",
+          explanation:"데모 해설",error_type:ok?null:"개념 이해 부족"
+        };
+      });
       d={percentage:Math.round(results.filter(x=>x.correct).length/results.length*100),results};
-      const g={};results.forEach(r=>(g[r.concept]??=[]).push(r.score));localStorage.setItem("edu_mastery",JSON.stringify(Object.entries(g).map(([concept,s])=>({concept,score:s.reduce((a,b)=>a+b,0)/s.length}))));
-    }else{d=await api("/api/quizzes/grade",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({quiz_id:currentQuiz.quiz_id,answers})})}
-    renderResult(d);await loadMastery();
+      const g={};
+      results.forEach(r=>(g[r.concept]??=[]).push(r.score));
+      localStorage.setItem("edu_mastery",JSON.stringify(
+        Object.entries(g).map(([concept,s])=>({concept,score:s.reduce((a,b)=>a+b,0)/s.length}))
+      ));
+    }else{
+      d=await api("/api/quizzes/grade",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({quiz_id:currentQuiz.quiz_id,answers})
+      });
+    }
+    renderResult(d); await loadMastery();
   }catch(e){alert(e.message)}
   finally{b.disabled=false;b.textContent="채점하기"}
 };
 
 function renderResult(d){
-  $("resultPanel").innerHTML=`<h2>채점 결과</h2><div class="score">${d.percentage}점</div>${d.results.map((r,i)=>`<div class="feedback"><strong>${i+1}번 · ${r.correct?"정답":"오답"}</strong><div>${esc(r.feedback||r.explanation||"")}</div>${!r.correct&&r.error_type?`<div class="muted">오류 유형: ${esc(r.error_type)}</div>`:""}</div>`).join("")}`;
+  $("resultPanel").innerHTML=`<h2>채점 결과</h2><div class="score">${d.percentage}점</div>
+  ${d.results.map((r,i)=>`<div class="feedback">
+    <strong>${i+1}번 · ${r.correct?"정답":"오답"}</strong>
+    <div>${esc(r.feedback||r.explanation||"")}</div>
+    ${!r.correct&&r.error_type?`<div class="muted">오류 유형: ${esc(r.error_type)}</div>`:""}
+  </div>`).join("")}`;
 }
 
 async function loadMastery(){
   const rows=demoMode?JSON.parse(localStorage.getItem("edu_mastery")||"[]"):await api("/api/mastery");
-  if(!rows.length){$("masteryList").innerHTML="아직 분석 데이터가 없다.";$("weakConcepts").innerHTML="문제를 풀면 분석된다.";return}
-  $("masteryList").innerHTML=rows.map(r=>{const p=Math.round(+r.score*100);return`<div class="mastery"><strong>${esc(r.concept)}</strong><div class="bar"><i style="--w:${p}%"></i></div><span>${p}%</span></div>`}).join("");
-  $("weakConcepts").innerHTML=rows.slice(0,5).map(r=>`<div class="material"><strong>${esc(r.concept)}</strong><span>${Math.round(+r.score*100)}%</span></div>`).join("");
+  if(!rows.length){
+    $("masteryList").innerHTML="아직 분석 데이터가 없다.";
+    $("weakConcepts").innerHTML="문제를 풀면 분석된다.";
+    return;
+  }
+  $("masteryList").innerHTML=rows.map(r=>{
+    const p=Math.round(+r.score*100);
+    return `<div class="mastery"><strong>${esc(r.concept)}</strong><div class="bar"><i style="--w:${p}%"></i></div><span>${p}%</span></div>`;
+  }).join("");
+  $("weakConcepts").innerHTML=rows.slice(0,5).map(r=>
+    `<div class="material"><strong>${esc(r.concept)}</strong><span>${Math.round(+r.score*100)}%</span></div>`
+  ).join("");
 }
 
-(async()=>{if(demoMode){renderMaterials();fillSelect();await loadMastery()}else{await loadMaterials();await loadMastery()}})();
+async function demoApi(url,opt={}){
+  await sleep(200);
+  if(url==="/api/research"){
+    return {
+      research_id:1,
+      summary:"데모: 시험범위에서 자주 나오는 공개 기출·모의고사 유형을 분석한 결과다.",
+      important_concepts:[
+        {concept:"핵심 개념 A",importance:3,reason:"반복 출제"},
+        {concept:"핵심 개념 B",importance:2,reason:"응용 출제"}
+      ],
+      patterns:[{name:"기본 개념 적용",concept:"핵심 개념 A",difficulty:2,description:"기본 개념을 계산에 적용",recommended_weight:40}],
+      pitfalls:["조건 누락"],
+      search_notes:["데모 모드"],
+      copyright_note:"상업 교재 원문은 복제하지 않고 유형만 참고한다.",
+      sources:[{title:"한국교육과정평가원 예시",url:"https://www.kice.re.kr/"}]
+    };
+  }
+  return [];
+}
+
+(async()=>{
+  if(demoMode){
+    renderMaterials(); fillSelect(); await loadMastery();
+  }else{
+    await loadMaterials(); await loadMastery();
+  }
+})();
+
 </script>
 </body>
 </html>
