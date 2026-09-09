@@ -197,3 +197,7 @@ async function loadMastery(){
   }
   await loadMaterials(); await loadMastery();
 })().catch(console.error);
+
+document.querySelectorAll("[data-go]").forEach(b=>{
+  b.addEventListener("click",()=>switchView(b.dataset.go));
+});
