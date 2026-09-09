@@ -20,13 +20,13 @@ async function api(url, options={}) {
 
 function switchView(name){
   document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
-  document.querySelectorAll(".nav").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(v=>v.classList.remove("active"));
   $(`${name}View`).classList.remove("hidden");
-  document.querySelector(`.nav[data-view="${name}"]`)?.classList.add("active");
+  document.querySelector(`.tab[data-view="${name}"]`)?.classList.add("active");
   const names={home:"홈",materials:"내 자료",quiz:"문제 풀기",analysis:"학습 분석"};
   $("pageTitle").textContent=names[name]||"Study AI";
 }
-document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>switchView(b.dataset.view));
 $("goUpload").onclick=()=>{switchView("materials");$("fileInput").click()};
 
 $("mcqPercent").oninput=e=>{
@@ -201,3 +201,6 @@ async function loadMastery(){
 document.querySelectorAll("[data-go]").forEach(b=>{
   b.addEventListener("click",()=>switchView(b.dataset.go));
 });
+
+const themeBtn=document.getElementById("themeBtn");
+if(themeBtn) themeBtn.onclick=()=>document.body.classList.toggle("dim-ui");
