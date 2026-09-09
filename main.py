@@ -27,7 +27,7 @@ ALLOWED_MIME = {
     "image/heif",
 }
 
-app = FastAPI(title="Study AI V0.1")
+app = FastAPI(title="EDU AI V0.2")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 class QuizRequest(BaseModel):

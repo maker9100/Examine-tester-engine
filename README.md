@@ -1,4 +1,4 @@
-# Study AI V0.1
+# EDU AI V0.2
 
 Firebase 없이 로컬/일반 서버에서 실행하는 AI 학습 웹앱 MVP.
 

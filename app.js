@@ -8,6 +8,9 @@ const esc = s => String(s ?? "")
   .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 
 async function api(url, options={}) {
+  if (location.hostname.endsWith("github.io")) {
+    throw new Error("GitHub Pages에서는 AI 백엔드가 실행되지 않습니다. 실제 AI 기능은 FastAPI 서버 연결 후 사용할 수 있습니다.");
+  }
   const res = await fetch(url, options);
   let data = null;
   try { data = await res.json(); } catch {}
@@ -185,4 +188,12 @@ async function loadMastery(){
   }).join("");
 }
 
-(async()=>{await loadMaterials();await loadMastery()})().catch(console.error);
+(async()=>{
+  if (location.hostname.endsWith("github.io")) {
+    materials=[]; renderMaterials(); fillQuizSelect();
+    $("masteryList").innerHTML='<div class="empty">AI 서버 연결 후 학습 분석이 표시된다.</div>';
+    $("weakConcepts").innerHTML='<div class="empty">AI 서버 연결 후 취약 개념이 표시된다.</div>';
+    return;
+  }
+  await loadMaterials(); await loadMastery();
+})().catch(console.error);

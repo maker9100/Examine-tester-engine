@@ -52,3 +52,11 @@ input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8dce2;bord
   .brand,.sidebar-note{display:none}.nav{white-space:nowrap}.main{padding:18px}.grid2,.workspace,.form-grid{grid-template-columns:1fr}.hero{min-height:auto;align-items:flex-start;flex-direction:column}
   .preview img,.preview iframe{height:55vh;min-height:360px}.mastery-row{grid-template-columns:110px 1fr 50px}
 }
+
+/* EDU AI V0.2 GitHub Pages UI */
+:root{--accent:#4f46e5;--ink:#15171b}
+.brand{font-size:24px;font-weight:900}
+.hero{background:radial-gradient(circle at 90% 10%,#eef2ff,transparent 35%),#fff}
+.primary{transition:transform .15s ease,box-shadow .15s ease}
+.primary:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(20,23,29,.14)}
+.panel{box-shadow:0 8px 28px rgba(30,36,50,.04)}
