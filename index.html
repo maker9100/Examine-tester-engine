@@ -1,205 +1,344 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EDU AI</title>
-  <link rel="stylesheet" href="/static/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EDU AI</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#f2f3f7;--card:#fff;--text:#25262b;--sub:#747a88;--line:#e1e4ec;
+  --purple:#6843eb;--purple2:#7e38f2;--soft:#f8f9fc;
+  font-family:"서초바탕","SeochoBatang","AppleMyungjo","Noto Serif KR","Batang",serif;
+  font-synthesis:none
+}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
+body{text-align:center}
+button,input,select,textarea{font:inherit}
+button,label{cursor:pointer}
+.shell{width:min(820px,calc(100% - 24px));margin:auto;padding:20px 0 110px}
+
+.hero{
+  background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;
+  border-radius:24px;padding:28px 20px 24px;box-shadow:0 16px 40px rgba(101,68,225,.2)
+}
+.hero h1{font-size:45px;letter-spacing:-.05em;margin:0}
+.hero p{font-size:14px;line-height:1.65;color:#f0ecff;margin:11px auto 18px;max-width:540px}
+.hero button{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:10px 20px;font-weight:700}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 7px 24px rgba(33,40,55,.04);margin-bottom:14px}
+.card h2{margin:0 0 14px;font-size:24px;letter-spacing:-.03em}
+.kicker{font-size:11px;color:#9298a5;letter-spacing:.12em;margin-bottom:5px}
+.center{text-align:center}
+.left,.left *{text-align:left!important}
+.hidden{display:none!important}
+
+.upload-btn,.primary,.soft-btn{
+  border:0;border-radius:12px;padding:10px 15px;font-weight:700
+}
+.upload-btn,.primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:white}
+.soft-btn{background:#eef0f4;color:#5f6673}
+.primary:disabled{opacity:.45}
+.status{min-height:18px;margin-top:8px;color:#7f8591;font-size:12px}
+
+.list{display:grid;gap:8px}
+.empty{color:#9aa0ab;padding:16px 4px;line-height:1.55}
+.material{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-bottom:1px solid #edf0f4}
+.material:last-child{border-bottom:0}
+.material button{border:0;background:none;font-weight:700;text-align:center}
+.badge{font-size:10px;background:#f0f1f5;border-radius:999px;padding:4px 7px;color:#737987}
+
+.settings{display:grid;gap:11px}
+.settings label{display:grid;gap:6px;font-size:13px;font-weight:700;color:#555c69}
+.settings label span{text-align:center}
+.range{display:grid;grid-template-columns:1fr 44px;align-items:center;gap:7px}
+.range em{font-style:normal;color:var(--purple)}
+input,select,textarea{width:100%;border:1px solid #d9deea;background:#fbfcff;border-radius:11px;padding:10px 11px;color:var(--text)}
+select,input[type=number]{text-align:center;text-align-last:center}
+input[type=range]{padding:0;accent-color:var(--purple)}
+textarea{text-align:left;min-height:110px;resize:vertical}
+
+.full{margin-top:14px}
+.study-title{text-align:left}
+.study-title h2{text-align:left}
+.quiz{display:grid;gap:13px}
+.qcard{background:#fafbfe;border:1px solid #eceff4;border-radius:15px;padding:16px;text-align:left}
+.qcard h3{font-size:17px;line-height:1.55;margin:0 0 5px}
+.muted{font-size:12px;color:var(--sub)}
+.choice{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #edf0f4}
+.choice input{width:auto;margin-top:4px}
+.result{line-height:1.65}
+.score{font-size:46px;font-weight:800;color:var(--purple);margin:4px 0 14px}
+.feedback{padding:12px 0;border-top:1px solid #eceff4}
+.feedback-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.feedback-box{background:var(--soft);border:1px solid #eceff4;border-radius:15px;padding:14px}
+.feedback-box h3{margin:0 0 8px;font-size:16px}
+.mastery{display:grid;grid-template-columns:105px 1fr 42px;gap:9px;align-items:center;padding:7px 0}
+.bar{height:8px;background:#e9ebf0;border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--purple),#9b83f6)}
+
+.workspace{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.preview{min-height:390px;background:#eef0f4;border-radius:13px;overflow:hidden}
+.preview img,.preview iframe{display:block;width:100%;height:56vh;min-height:390px;border:0;object-fit:contain}
+.note{line-height:1.72}
+.note h2{font-size:23px}.note h3{font-size:16px;margin:22px 0 7px}
+.note ul{padding-left:20px}
+.note-box{background:#fafbfe;border:1px solid #eceff4;border-radius:11px;padding:11px;margin:8px 0}
+
+.bottom{
+  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);
+  width:min(790px,calc(100% - 24px));display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+  background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:19px;
+  padding:7px;box-shadow:0 12px 35px rgba(25,30,42,.13);backdrop-filter:blur(14px)
+}
+.bottom button{border:0;background:transparent;color:#757b87;padding:10px 5px;border-radius:13px;font-weight:700}
+.bottom button.active{background:#eeeaff;color:var(--purple)}
+
+@media(max-width:680px){
+  .shell{width:calc(100% - 18px);padding-top:10px}
+  .hero{border-radius:20px;padding:24px 16px 21px}.hero h1{font-size:38px}
+  .grid2,.workspace,.feedback-grid{grid-template-columns:1fr}
+  .card{border-radius:18px;padding:16px}
+  .preview img,.preview iframe{height:45vh;min-height:300px}
+}
+</style>
 </head>
 <body>
-  <div class="app-shell">
+<div class="shell">
+<header class="hero">
+  <h1>EDU AI</h1>
+  <p>학습자료를 요약하고 문제를 만들고 오답을 분석하는 AI 학습 도구</p>
+  <button id="startBtn">학습 시작</button>
+</header>
 
-    <header class="hero-card ui-center">
-      <div class="hero-title">EDU AI</div>
-      <div class="hero-subtitle">
-        학습자료를 요약하고 문제를 만들고 오답을 분석하는 AI 학습 도구
+<section id="home">
+  <div class="grid2">
+    <section class="card center">
+      <div class="kicker">자료</div><h2>자료</h2>
+      <label class="upload-btn" for="file1">+ 자료 추가</label>
+      <input id="file1" type="file" hidden accept="image/*,.pdf,application/pdf">
+      <div id="uploadStatus" class="status"></div>
+      <div id="recentMaterials" class="list empty">아직 자료가 없다.</div>
+      <button id="allMaterialsBtn" class="soft-btn">전체 자료 보기</button>
+    </section>
+
+    <section class="card center">
+      <div class="kicker">문제 설정</div><h2>문제 설정</h2>
+      <div class="settings">
+        <label><span>자료</span><select id="quizMaterial"></select></label>
+        <label><span>문제 수</span><input id="quizCount" type="number" min="1" max="30" value="10"></label>
+        <label><span>객관식 비율</span><div class="range"><input id="mcqPercent" type="range" min="0" max="100" step="10" value="70"><em id="mcqLabel">70%</em></div></label>
+        <label><span>난이도</span><select id="difficulty"><option value="mixed">혼합</option><option value="easy">쉬움</option><option value="normal">보통</option><option value="hard">어려움</option></select></label>
       </div>
-      <button id="goUpload" class="start-btn">학습 시작</button>
-    </header>
-
-    <main class="main-stack">
-
-      <section id="homeView" class="view">
-
-        <div class="grid-two">
-
-          <section class="panel compact ui-center">
-            <div class="panel-head centered-head">
-              <div>
-                <div class="section-kicker">자료</div>
-                <h2>자료</h2>
-              </div>
-            </div>
-
-            <div class="mini-actions centered-actions">
-              <label class="upload-chip" for="fileInput">+ 자료 추가</label>
-              <input id="fileInput" hidden type="file" accept="image/*,.pdf,application/pdf">
-            </div>
-
-            <div id="uploadStatus" class="status"></div>
-
-            <div id="recentMaterials" class="simple-list empty ui-center">
-              아직 자료가 없다.
-            </div>
-
-            <button class="ghost-btn center-button" data-action="open-materials">전체 자료 보기</button>
-          </section>
-
-          <section class="panel compact ui-center">
-            <div class="panel-head centered-head">
-              <div>
-                <div class="section-kicker">문제 설정</div>
-                <h2>문제 설정</h2>
-              </div>
-            </div>
-
-            <div class="settings-grid ui-center">
-              <label>
-                <span>자료</span>
-                <select id="quizMaterial"></select>
-              </label>
-
-              <label>
-                <span>문제 수</span>
-                <input id="quizCount" type="number" min="1" max="30" value="10">
-              </label>
-
-              <label>
-                <span>객관식 비율</span>
-                <div class="range-line">
-                  <input id="mcqPercent" type="range" min="0" max="100" step="10" value="70">
-                  <em id="mcqLabel">70%</em>
-                </div>
-              </label>
-
-              <label>
-                <span>난이도</span>
-                <select id="difficulty">
-                  <option value="mixed">혼합</option>
-                  <option value="easy">쉬움</option>
-                  <option value="normal">보통</option>
-                  <option value="hard">어려움</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="settings-footer centered-actions">
-              <button id="generateQuiz" class="primary-btn">문제 생성</button>
-            </div>
-            <div id="quizStatus" class="status"></div>
-          </section>
-
-        </div>
-
-        <section id="homeQuizSection" class="panel large study-block">
-          <div class="panel-head study-heading">
-            <div>
-              <div class="section-kicker">문제 및 오답노트</div>
-              <h2>문제 및 오답노트</h2>
-            </div>
-          </div>
-
-          <form id="quizForm" class="quiz-stack hidden"></form>
-
-          <div id="resultPanel" class="result-wrap empty study-content">
-            생성된 문제가 여기에 표시된다.<br>
-            채점 후 틀린 문제와 해설도 같은 영역에서 확인할 수 있다.
-          </div>
-        </section>
-
-        <section id="homeFeedbackSection" class="panel large ui-center">
-          <div class="panel-head centered-head">
-            <div>
-              <div class="section-kicker">피드백</div>
-              <h2>피드백</h2>
-            </div>
-          </div>
-
-          <div class="feedback-grid">
-            <div class="feedback-box ui-center">
-              <h3>취약 개념</h3>
-              <div id="weakConcepts" class="simple-list empty ui-center">
-                문제를 풀면 분석된다.
-              </div>
-            </div>
-
-            <div class="feedback-box ui-center">
-              <h3>개념 숙련도</h3>
-              <div id="masteryList" class="simple-list empty ui-center">
-                아직 분석 데이터가 없다.
-              </div>
-            </div>
-          </div>
-
-          <div class="feedback-note ui-center">
-            틀린 문제 → 오류 분석 → 취약 개념 누적 → 복습
-          </div>
-        </section>
-
-      </section>
-
-      <section id="materialsView" class="view hidden">
-
-        <section class="panel ui-center">
-          <div class="panel-head centered-head">
-            <div>
-              <div class="section-kicker">자료</div>
-              <h2>내 자료</h2>
-            </div>
-          </div>
-
-          <div class="centered-actions">
-            <label class="upload-chip" for="fileInput2">+ 자료 추가</label>
-            <input id="fileInput2" hidden type="file" accept="image/*,.pdf,application/pdf">
-          </div>
-
-          <div id="materialsList" class="simple-list empty ui-center">
-            자료가 없다.
-          </div>
-        </section>
-
-        <div id="workspace" class="workspace hidden">
-
-          <section class="panel ui-center">
-            <div class="panel-head centered-head">
-              <div>
-                <div class="section-kicker">원본</div>
-                <h2>자료 보기</h2>
-                <p id="selectedFilename" class="filename"></p>
-              </div>
-            </div>
-            <div id="preview" class="preview"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-head note-head">
-              <div>
-                <div class="section-kicker">요약 노트</div>
-                <h2>AI 요약</h2>
-              </div>
-              <button id="analyzeBtn" class="primary-btn">AI 분석</button>
-            </div>
-
-            <div id="note" class="note empty study-content">
-              자료를 선택하고 AI 분석을 눌러라.
-            </div>
-          </section>
-
-        </div>
-
-      </section>
-
-    </main>
-
-    <nav class="bottom-nav ui-center">
-      <button class="bottom-tab active" data-target="home">홈</button>
-      <button class="bottom-tab" data-target="materials">자료</button>
-      <button class="bottom-tab" data-target="quiz">문제</button>
-      <button class="bottom-tab" data-target="analysis">분석</button>
-    </nav>
-
+      <div style="margin-top:14px"><button id="generateQuiz" class="primary">문제 생성</button></div>
+      <div id="quizStatus" class="status"></div>
+    </section>
   </div>
 
-  <script src="/static/app.js"></script>
+  <section id="quizSection" class="card full left">
+    <div class="kicker">문제 및 오답노트</div>
+    <div class="study-title"><h2>문제 및 오답노트</h2></div>
+    <form id="quizForm" class="quiz hidden"></form>
+    <div id="resultPanel" class="result empty left">생성된 문제가 여기에 표시된다.<br>채점 후 틀린 문제와 해설도 여기서 확인한다.</div>
+  </section>
+
+  <section id="feedbackSection" class="card full center">
+    <div class="kicker">피드백</div><h2>피드백</h2>
+    <div class="feedback-grid">
+      <div class="feedback-box center"><h3>취약 개념</h3><div id="weakConcepts" class="list empty center">문제를 풀면 분석된다.</div></div>
+      <div class="feedback-box center"><h3>개념 숙련도</h3><div id="masteryList" class="list empty center">아직 분석 데이터가 없다.</div></div>
+    </div>
+  </section>
+</section>
+
+<section id="materialsPage" class="hidden">
+  <section class="card center">
+    <div class="kicker">자료</div><h2>내 자료</h2>
+    <label class="upload-btn" for="file2">+ 자료 추가</label>
+    <input id="file2" type="file" hidden accept="image/*,.pdf,application/pdf">
+    <div id="materialsList" class="list empty">자료가 없다.</div>
+  </section>
+
+  <div id="workspace" class="workspace hidden">
+    <section class="card center">
+      <div class="kicker">원본</div><h2>자료 보기</h2>
+      <div id="selectedFilename" class="muted"></div>
+      <div id="preview" class="preview"></div>
+    </section>
+    <section class="card left">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div><div class="kicker">요약 노트</div><h2 style="text-align:left;margin:0">AI 요약</h2></div>
+        <button id="analyzeBtn" class="primary">AI 분석</button>
+      </div>
+      <div id="note" class="note empty left">자료를 선택하고 AI 분석을 눌러라.</div>
+    </section>
+  </div>
+</section>
+</div>
+
+<nav class="bottom">
+  <button class="active" data-nav="home">홈</button>
+  <button data-nav="materials">자료</button>
+  <button data-nav="quiz">문제</button>
+  <button data-nav="analysis">분석</button>
+</nav>
+
+<script>
+let materials=[], selectedMaterial=null, currentQuiz=null;
+const demoMode = location.hostname.endsWith("github.io");
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function api(url,opt={}){
+  if(demoMode) return demoApi(url,opt);
+  const r=await fetch(url,opt);
+  let d=null; try{d=await r.json()}catch{}
+  if(!r.ok) throw new Error(d?.detail||`HTTP ${r.status}`);
+  return d;
+}
+
+function setNav(n){
+  document.querySelectorAll("[data-nav]").forEach(b=>b.classList.toggle("active",b.dataset.nav===n));
+}
+function showHome(){ $("home").classList.remove("hidden"); $("materialsPage").classList.add("hidden"); setNav("home"); scrollTo({top:0,behavior:"smooth"}); }
+function showMaterials(){ $("home").classList.add("hidden"); $("materialsPage").classList.remove("hidden"); setNav("materials"); scrollTo({top:0,behavior:"smooth"}); }
+function gotoQuiz(){ showHome(); setNav("quiz"); $("quizSection").scrollIntoView({behavior:"smooth"}); }
+function gotoAnalysis(){ showHome(); setNav("analysis"); $("feedbackSection").scrollIntoView({behavior:"smooth"}); }
+
+document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{
+  const n=b.dataset.nav;
+  n==="materials"?showMaterials():n==="quiz"?gotoQuiz():n==="analysis"?gotoAnalysis():showHome();
+});
+$("startBtn").onclick=()=>{showMaterials();$("file2").click()};
+$("allMaterialsBtn").onclick=showMaterials;
+$("mcqPercent").oninput=e=>$("mcqLabel").textContent=`${e.target.value}%`;
+
+async function loadMaterials(){
+  materials=await api("/api/materials");
+  renderMaterials(); fillSelect();
+}
+function renderMaterials(){
+  if(!materials.length){
+    $("recentMaterials").innerHTML="아직 자료가 없다.";
+    $("materialsList").innerHTML="자료가 없다.";
+    return;
+  }
+  const row=m=>`<div class="material"><button data-open="${m.id}">${esc(m.title||m.filename)}</button><span class="badge">${esc(m.status||"uploaded")}</span></div>`;
+  $("recentMaterials").innerHTML=materials.slice(0,4).map(row).join("");
+  $("materialsList").innerHTML=materials.map(row).join("");
+  document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openMaterial(+b.dataset.open));
+}
+function fillSelect(){
+  const ready=materials.filter(m=>m.status==="ready");
+  $("quizMaterial").innerHTML=ready.length?ready.map(m=>`<option value="${m.id}">${esc(m.title||m.filename)}</option>`).join(""):`<option value="">먼저 자료를 분석해라</option>`;
+}
+async function upload(fileInput){
+  const f=fileInput.files?.[0]; if(!f)return;
+  $("uploadStatus").textContent="업로드 중...";
+  try{
+    if(demoMode){
+      const id=Date.now(),url=URL.createObjectURL(f);
+      materials.unshift({id,filename:f.name,title:f.name,mime_type:f.type||"image/jpeg",status:"uploaded",_url:url});
+      renderMaterials();fillSelect();
+    }else{
+      const fd=new FormData();fd.append("file",f);
+      await api("/api/materials",{method:"POST",body:fd}); await loadMaterials();
+    }
+    $("uploadStatus").textContent="업로드 완료.";
+  }catch(e){$("uploadStatus").textContent=e.message}
+  fileInput.value="";
+}
+$("file1").onchange=()=>upload($("file1"));
+$("file2").onchange=()=>upload($("file2"));
+
+async function openMaterial(id){
+  selectedMaterial=demoMode?materials.find(m=>m.id===id):await api(`/api/materials/${id}`);
+  if(!selectedMaterial)return;
+  showMaterials(); $("workspace").classList.remove("hidden"); $("selectedFilename").textContent=selectedMaterial.filename||"";
+  const url=demoMode?selectedMaterial._url:`/api/materials/${id}/file`;
+  $("preview").innerHTML=(selectedMaterial.mime_type||"").startsWith("image/")?`<img src="${url}">`:`<iframe src="${url}"></iframe>`;
+  selectedMaterial.summary?renderNote(selectedMaterial.summary):$("note").innerHTML="자료를 선택하고 AI 분석을 눌러라.";
+}
+
+$("analyzeBtn").onclick=async()=>{
+  if(!selectedMaterial)return alert("먼저 자료를 선택해라.");
+  $("analyzeBtn").disabled=true;$("analyzeBtn").textContent="분석 중...";
+  try{
+    let note;
+    if(demoMode){
+      await sleep(350);
+      note={title:selectedMaterial.filename,subject:"데모 과목",chapter:"UI 테스트",summary:"GitHub Pages 데모 요약이다. FastAPI로 실행하면 실제 업로드 자료를 AI가 분석한다.",key_points:["요약 노트는 좌측 정렬","문제와 오답노트도 좌측 정렬","그 외 UI는 가운데 정렬"],formulas:[],terms:[{term:"EDU AI",definition:"학습자료 요약·문제 생성·오답 분석 웹앱"}],study_tips:["실제 AI 기능은 FastAPI 서버에서 사용한다."]};
+      selectedMaterial.summary=note; selectedMaterial.status="ready";
+      renderMaterials();fillSelect();
+    }else{note=await api(`/api/materials/${selectedMaterial.id}/analyze`,{method:"POST"});await loadMaterials()}
+    renderNote(note);
+  }catch(e){alert(e.message)}
+  finally{$("analyzeBtn").disabled=false;$("analyzeBtn").textContent="AI 분석"}
+};
+
+function renderNote(n){
+  $("note").className="note left";
+  $("note").innerHTML=`<h2>${esc(n.title||"요약노트")}</h2><p class="muted">${esc(n.subject||"")}${n.chapter?` · ${esc(n.chapter)}`:""}</p><p>${esc(n.summary||"")}</p>
+  <h3>핵심 개념</h3><ul>${(n.key_points||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  ${(n.formulas||[]).length?`<h3>공식 / 법칙</h3>${n.formulas.map(f=>`<div class="note-box"><strong>${esc(f.name)}</strong><br>${esc(f.expression)}<br><span class="muted">${esc(f.meaning)}</span></div>`).join("")}`:""}
+  ${(n.terms||[]).length?`<h3>용어</h3><ul>${n.terms.map(t=>`<li><strong>${esc(t.term)}</strong> — ${esc(t.definition)}</li>`).join("")}</ul>`:""}
+  <h3>시험에서 주의할 점</h3><ul>${(n.study_tips||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+}
+
+$("generateQuiz").onclick=async()=>{
+  const material_id=+$("quizMaterial").value;if(!material_id){$("quizStatus").textContent="분석된 자료가 필요하다.";return}
+  $("generateQuiz").disabled=true;$("quizStatus").textContent="문제 생성 중...";
+  try{
+    if(demoMode){
+      const n=Math.min(+$("quizCount").value||5,10),m=+$("mcqPercent").value;
+      currentQuiz={quiz_id:1,title:"EDU AI 데모 문제",questions:Array.from({length:n},(_,i)=>({id:`q${i+1}`,type:i<Math.round(n*m/100)?"multiple_choice":"short_answer",concept:i%2?"핵심 개념":"자료 이해",difficulty:(i%3)+1,question:i<Math.round(n*m/100)?`${i+1}번. EDU AI의 학습 흐름으로 맞는 것은?`:`${i+1}번. EDU AI의 학습 흐름을 간단히 설명하시오.`,choices:i<Math.round(n*m/100)?["영상 편집","자료 → 요약 → 문제 → 오답 분석","게임 실행","음악 재생"]:[]}))};
+    }else{
+      currentQuiz=await api("/api/quizzes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({material_id,count:+$("quizCount").value,mcq_percent:+$("mcqPercent").value,difficulty:$("difficulty").value})});
+    }
+    renderQuiz();$("quizStatus").textContent="";gotoQuiz();
+  }catch(e){$("quizStatus").textContent=e.message}
+  finally{$("generateQuiz").disabled=false}
+};
+
+function renderQuiz(){
+  $("quizForm").classList.remove("hidden");
+  $("resultPanel").innerHTML="";
+  $("quizForm").innerHTML=`<div class="qcard"><h2>${esc(currentQuiz.title)}</h2><p class="muted">${currentQuiz.questions.length}문제</p></div>
+  ${currentQuiz.questions.map((q,i)=>`<div class="qcard"><h3>${i+1}. ${esc(q.question)}</h3><p class="muted">${esc(q.concept)} · 난이도 ${q.difficulty}</p>${q.type==="multiple_choice"?(q.choices||[]).map((c,j)=>`<label class="choice"><input type="radio" name="${q.id}" value="${j}"><span>${j+1}. ${esc(c)}</span></label>`).join(""):`<textarea name="${q.id}" placeholder="답안을 입력"></textarea>`}</div>`).join("")}
+  <button type="submit" class="primary">채점하기</button>`;
+}
+
+$("quizForm").onsubmit=async e=>{
+  e.preventDefault();const fd=new FormData(e.target),answers={};
+  currentQuiz.questions.forEach(q=>{const v=fd.get(q.id);answers[q.id]=q.type==="multiple_choice"&&v!==null?+v:(v??"")});
+  const b=e.target.querySelector("[type=submit]");b.disabled=true;b.textContent="채점 중...";
+  try{
+    let d;
+    if(demoMode){
+      await sleep(250);
+      const results=currentQuiz.questions.map(q=>{const a=answers[q.id],ok=q.type==="multiple_choice"?+a===1:String(a||"").trim().length>5;return{id:q.id,concept:q.concept,correct:ok,score:ok?1:0,feedback:ok?"정답이다.":"핵심 흐름을 다시 확인해라.",explanation:"자료 → 요약 → 문제 → 오답 분석",error_type:ok?null:"개념 이해 부족"}});
+      d={percentage:Math.round(results.filter(x=>x.correct).length/results.length*100),results};
+      const g={};results.forEach(r=>(g[r.concept]??=[]).push(r.score));localStorage.setItem("edu_mastery",JSON.stringify(Object.entries(g).map(([concept,s])=>({concept,score:s.reduce((a,b)=>a+b,0)/s.length}))));
+    }else{d=await api("/api/quizzes/grade",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({quiz_id:currentQuiz.quiz_id,answers})})}
+    renderResult(d);await loadMastery();
+  }catch(e){alert(e.message)}
+  finally{b.disabled=false;b.textContent="채점하기"}
+};
+
+function renderResult(d){
+  $("resultPanel").innerHTML=`<h2>채점 결과</h2><div class="score">${d.percentage}점</div>${d.results.map((r,i)=>`<div class="feedback"><strong>${i+1}번 · ${r.correct?"정답":"오답"}</strong><div>${esc(r.feedback||r.explanation||"")}</div>${!r.correct&&r.error_type?`<div class="muted">오류 유형: ${esc(r.error_type)}</div>`:""}</div>`).join("")}`;
+}
+
+async function loadMastery(){
+  const rows=demoMode?JSON.parse(localStorage.getItem("edu_mastery")||"[]"):await api("/api/mastery");
+  if(!rows.length){$("masteryList").innerHTML="아직 분석 데이터가 없다.";$("weakConcepts").innerHTML="문제를 풀면 분석된다.";return}
+  $("masteryList").innerHTML=rows.map(r=>{const p=Math.round(+r.score*100);return`<div class="mastery"><strong>${esc(r.concept)}</strong><div class="bar"><i style="--w:${p}%"></i></div><span>${p}%</span></div>`}).join("");
+  $("weakConcepts").innerHTML=rows.slice(0,5).map(r=>`<div class="material"><strong>${esc(r.concept)}</strong><span>${Math.round(+r.score*100)}%</span></div>`).join("");
+}
+
+(async()=>{if(demoMode){renderMaterials();fillSelect();await loadMastery()}else{await loadMaterials();await loadMastery()}})();
+</script>
 </body>
 </html>
