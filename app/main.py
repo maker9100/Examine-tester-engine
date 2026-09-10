@@ -30,7 +30,7 @@ ALLOWED = {
     "image/heif",
 }
 
-app = FastAPI(title="EDU AI 0.9.4")
+app = FastAPI(title="EDU AI 0.9.5")
 
 
 def _allowed_origins():
@@ -100,7 +100,7 @@ def index():
     return {
         "ok": True,
         "app": "EDU AI",
-        "version": "0.9.4",
+        "version": "0.9.5",
         "backend": "Render / FastAPI",
         "health": "/api/health",
     }
@@ -112,10 +112,11 @@ def health():
     return {
         "ok": True,
         "app": "EDU AI",
-        "version": "0.9.4",
+        "version": "0.9.5",
         "ai_provider": provider,
         "gemini_ready": bool(os.getenv("GEMINI_API_KEY")),
         "openai_ready": bool(os.getenv("OPENAI_API_KEY")),
+        "auto_fallback": os.getenv("AI_PROVIDER", "auto").strip().lower() == "auto",
     }
 
 

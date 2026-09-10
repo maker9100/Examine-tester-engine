@@ -143,17 +143,114 @@ def _openai_json(prompt: str, *, model: str | None = None, use_search: bool = Fa
     return data, sources
 
 
+def _provider_sequence() -> list[str]:
+    """AI_PROVIDER=auto일 때 Gemini -> OpenAI 순으로 시도한다.
+
+    명시적으로 gemini/openai를 지정한 경우에는 해당 공급자만 사용한다.
+    """
+    if AI_PROVIDER in {"gemini", "openai"}:
+        return [AI_PROVIDER]
+
+    providers: list[str] = []
+    if os.getenv("GEMINI_API_KEY"):
+        providers.append("gemini")
+    if os.getenv("OPENAI_API_KEY"):
+        providers.append("openai")
+    return providers
+
+
+def _fallback_error(errors: list[tuple[str, Exception]]) -> RuntimeError:
+    if not errors:
+        return RuntimeError("사용 가능한 AI API 키가 없습니다. GEMINI_API_KEY 또는 OPENAI_API_KEY를 설정하세요.")
+
+    # API의 긴 내부 오류 전문은 프론트에 노출하지 않는다.
+    providers = ", ".join(p for p, _ in errors)
+    return RuntimeError(
+        f"현재 사용 가능한 AI가 없습니다. ({providers}) "
+        "각 AI의 사용량 한도, 결제 상태 또는 API 키를 확인한 뒤 다시 시도하세요."
+    )
+
+
 def _json_ai(prompt: str, *, use_search: bool = False) -> tuple[dict, list[dict]]:
-    provider = active_provider()
-    if provider == "gemini":
-        return _gemini_json(prompt, use_search=use_search)
-    if provider == "openai":
-        return _openai_json(
-            prompt,
-            model=OPENAI_WEB_MODEL if use_search else OPENAI_MODEL,
-            use_search=use_search,
+    errors: list[tuple[str, Exception]] = []
+
+    for provider in _provider_sequence():
+        try:
+            if provider == "gemini":
+                return _gemini_json(prompt, use_search=use_search)
+            if provider == "openai":
+                return _openai_json(
+                    prompt,
+                    model=OPENAI_WEB_MODEL if use_search else OPENAI_MODEL,
+                    use_search=use_search,
+                )
+        except Exception as exc:
+            errors.append((provider, exc))
+            # auto 모드일 때만 다음 공급자로 넘어간다.
+            if AI_PROVIDER != "auto":
+                raise
+
+    raise _fallback_error(errors)
+
+
+def _analyze_with_gemini(path: Path, mime_type: str, prompt: str) -> dict:
+    from google.genai import types
+
+    client = _gemini_client()
+    part = types.Part.from_bytes(
+        data=path.read_bytes(),
+        mime_type=mime_type,
+    )
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=[prompt, part],
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            temperature=0.2,
+        ),
+    )
+    return _parse_json(response.text or "")
+
+
+def _analyze_with_openai(path: Path, mime_type: str, prompt: str) -> dict:
+    client = _openai_client()
+
+    if mime_type == "application/pdf":
+        uploaded = None
+        try:
+            with path.open("rb") as f:
+                uploaded = client.files.create(file=f, purpose="user_data")
+            response = client.responses.create(
+                model=OPENAI_MODEL,
+                input=[{
+                    "role": "user",
+                    "content": [
+                        {"type": "input_file", "file_id": uploaded.id},
+                        {"type": "input_text", "text": prompt},
+                    ],
+                }],
+            )
+        finally:
+            if uploaded is not None:
+                try:
+                    client.files.delete(uploaded.id)
+                except Exception:
+                    pass
+    else:
+        raw = base64.b64encode(path.read_bytes()).decode("ascii")
+        data_url = f"data:{mime_type};base64,{raw}"
+        response = client.responses.create(
+            model=OPENAI_MODEL,
+            input=[{
+                "role": "user",
+                "content": [
+                    {"type": "input_image", "image_url": data_url, "detail": "auto"},
+                    {"type": "input_text", "text": prompt},
+                ],
+            }],
         )
-    raise RuntimeError("사용 가능한 AI API 키가 없습니다. GEMINI_API_KEY 또는 OPENAI_API_KEY를 설정하세요.")
+
+    return _parse_json(response.output_text)
 
 
 def analyze_material(path: Path, mime_type: str) -> dict:
@@ -182,67 +279,19 @@ def analyze_material(path: Path, mime_type: str) -> dict:
 - 고등학생이 복습하기 쉬운 길이로 정리한다.
 """
 
-    provider = active_provider()
+    errors: list[tuple[str, Exception]] = []
+    for provider in _provider_sequence():
+        try:
+            if provider == "gemini":
+                return _analyze_with_gemini(path, mime_type, prompt)
+            if provider == "openai":
+                return _analyze_with_openai(path, mime_type, prompt)
+        except Exception as exc:
+            errors.append((provider, exc))
+            if AI_PROVIDER != "auto":
+                raise
 
-    if provider == "gemini":
-        from google.genai import types
-        client = _gemini_client()
-        part = types.Part.from_bytes(
-            data=path.read_bytes(),
-            mime_type=mime_type,
-        )
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=[prompt, part],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.2,
-            ),
-        )
-        return _parse_json(response.text or "")
-
-    if provider == "openai":
-        client = _openai_client()
-
-        if mime_type == "application/pdf":
-            uploaded = None
-            try:
-                with path.open("rb") as f:
-                    uploaded = client.files.create(file=f, purpose="user_data")
-                response = client.responses.create(
-                    model=OPENAI_MODEL,
-                    input=[{
-                        "role": "user",
-                        "content": [
-                            {"type": "input_file", "file_id": uploaded.id},
-                            {"type": "input_text", "text": prompt},
-                        ],
-                    }],
-                )
-            finally:
-                if uploaded is not None:
-                    try:
-                        client.files.delete(uploaded.id)
-                    except Exception:
-                        pass
-        else:
-            raw = base64.b64encode(path.read_bytes()).decode("ascii")
-            data_url = f"data:{mime_type};base64,{raw}"
-            response = client.responses.create(
-                model=OPENAI_MODEL,
-                input=[{
-                    "role": "user",
-                    "content": [
-                        {"type": "input_image", "image_url": data_url, "detail": "auto"},
-                        {"type": "input_text", "text": prompt},
-                    ],
-                }],
-            )
-
-        return _parse_json(response.output_text)
-
-    raise RuntimeError("사용 가능한 AI API 키가 없습니다.")
-
+    raise _fallback_error(errors)
 
 def research_exam_scope(grade: str, subject: str, scope: str) -> dict:
     prompt = f"""
