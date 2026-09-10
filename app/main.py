@@ -1,5 +1,6 @@
 import json
 import mimetypes
+import os
 import uuid
 from pathlib import Path
 
@@ -8,7 +9,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
-from .ai import analyze_material, research_exam_scope, generate_quiz, grade_subjective
+from .ai import (
+    active_provider,
+    analyze_material,
+    research_exam_scope,
+    generate_quiz,
+    grade_subjective,
+)
 from .db import connect, init_db, now_iso
 
 BASE = Path(__file__).resolve().parent.parent
@@ -23,11 +30,8 @@ ALLOWED = {
     "image/heif",
 }
 
-app = FastAPI(title="EDU AI 0.9.2")
+app = FastAPI(title="EDU AI 0.9.3")
 
-# GitHub Pages(프론트) -> Render(FastAPI) 요청 허용.
-# 추가 도메인은 FRONTEND_ORIGINS 환경변수에 쉼표로 넣을 수 있다.
-import os
 
 def _allowed_origins():
     defaults = [
@@ -37,21 +41,28 @@ def _allowed_origins():
         "http://localhost:5500",
         "http://127.0.0.1:5500",
     ]
-    extra = [x.strip().rstrip("/") for x in os.getenv("FRONTEND_ORIGINS", "").split(",") if x.strip()]
+    extra = [
+        x.strip().rstrip("/")
+        for x in os.getenv("FRONTEND_ORIGINS", "").split(",")
+        if x.strip()
+    ]
     return list(dict.fromkeys(defaults + extra))
+
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins(),
     allow_credentials=False,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
 
 class ResearchReq(BaseModel):
     grade: str = Field(min_length=1, max_length=40)
     subject: str = Field(min_length=1, max_length=100)
     scope: str = Field(min_length=1, max_length=8000)
+
 
 class QuizReq(BaseModel):
     material_id: int | None = None
@@ -60,22 +71,41 @@ class QuizReq(BaseModel):
     mcq_percent: int = Field(70, ge=0, le=100)
     difficulty: str = "mixed"
 
+
 class GradeReq(BaseModel):
     quiz_id: int
     answers: dict
+
 
 @app.on_event("startup")
 def startup():
     UPLOADS.mkdir(exist_ok=True)
     init_db()
 
+
 @app.get("/")
 def index():
-    return FileResponse(BASE / "index.html")
+    return {
+        "ok": True,
+        "app": "EDU AI",
+        "version": "0.9.3",
+        "backend": "Render / FastAPI",
+        "health": "/api/health",
+    }
+
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "app": "EDU AI", "version": "0.9.2", "ai": "OpenAI GPT"}
+    provider = active_provider()
+    return {
+        "ok": True,
+        "app": "EDU AI",
+        "version": "0.9.3",
+        "ai_provider": provider,
+        "gemini_ready": bool(os.getenv("GEMINI_API_KEY")),
+        "openai_ready": bool(os.getenv("OPENAI_API_KEY")),
+    }
+
 
 @app.post("/api/materials")
 async def upload_material(file: UploadFile = File(...)):
@@ -101,6 +131,7 @@ async def upload_material(file: UploadFile = File(...)):
 
     return {"id": mid, "filename": file.filename, "status": "uploaded"}
 
+
 @app.get("/api/materials")
 def materials():
     with connect() as c:
@@ -109,6 +140,7 @@ def materials():
                FROM materials ORDER BY id DESC"""
         ).fetchall()
     return [dict(x) for x in rows]
+
 
 @app.get("/api/materials/{mid}")
 def material(mid: int):
@@ -119,6 +151,7 @@ def material(mid: int):
     d = dict(row)
     d["summary"] = json.loads(d["summary_json"]) if d.get("summary_json") else None
     return d
+
 
 @app.get("/api/materials/{mid}/file")
 def material_file(mid: int):
@@ -131,6 +164,27 @@ def material_file(mid: int):
         raise HTTPException(404, "원본 파일이 없습니다.")
     return FileResponse(path, media_type=row["mime_type"], filename=row["filename"])
 
+
+@app.delete("/api/materials/{mid}")
+def delete_material(mid: int):
+    with connect() as c:
+        row = c.execute("SELECT * FROM materials WHERE id=?", (mid,)).fetchone()
+        if not row:
+            raise HTTPException(404, "자료를 찾을 수 없습니다.")
+
+        # quizzes.material_id는 DB 스키마의 ON DELETE SET NULL로 기록을 보존한다.
+        c.execute("DELETE FROM materials WHERE id=?", (mid,))
+
+    path = UPLOADS / row["stored_name"]
+    try:
+        if path.exists():
+            path.unlink()
+    except Exception:
+        pass
+
+    return {"ok": True, "deleted_id": mid}
+
+
 @app.post("/api/materials/{mid}/analyze")
 def material_analyze(mid: int):
     with connect() as c:
@@ -138,8 +192,12 @@ def material_analyze(mid: int):
     if not row:
         raise HTTPException(404, "자료를 찾을 수 없습니다.")
 
+    path = UPLOADS / row["stored_name"]
+    if not path.exists():
+        raise HTTPException(404, "원본 파일이 없습니다.")
+
     try:
-        note = analyze_material(UPLOADS / row["stored_name"], row["mime_type"])
+        note = analyze_material(path, row["mime_type"])
         with connect() as c:
             c.execute(
                 """UPDATE materials
@@ -155,14 +213,15 @@ def material_analyze(mid: int):
             )
         return note
     except Exception as e:
-        raise HTTPException(500, f"GPT 자료 분석 실패: {e}")
+        raise HTTPException(500, f"AI 자료 분석 실패: {e}")
+
 
 @app.post("/api/research")
 def research(req: ResearchReq):
     try:
         result = research_exam_scope(req.grade, req.subject, req.scope)
     except Exception as e:
-        raise HTTPException(500, f"웹 시험범위 분석 실패: {e}")
+        raise HTTPException(500, f"AI 웹 시험범위 분석 실패: {e}")
 
     with connect() as c:
         cur = c.execute(
@@ -179,6 +238,7 @@ def research(req: ResearchReq):
         rid = cur.lastrowid
 
     return {"research_id": rid, **result}
+
 
 @app.post("/api/quizzes")
 def make_quiz(req: QuizReq):
@@ -213,7 +273,7 @@ def make_quiz(req: QuizReq):
         ).fetchall()
 
     if req.material_id and note is None and not research:
-        raise HTTPException(400, "선택한 자료를 먼저 GPT 분석하세요.")
+        raise HTTPException(400, "선택한 자료를 먼저 AI 분석하세요.")
 
     weak = [dict(x) for x in weak_rows]
 
@@ -227,7 +287,7 @@ def make_quiz(req: QuizReq):
             weak_concepts=weak,
         )
     except Exception as e:
-        raise HTTPException(500, f"GPT 문제 생성 실패: {e}")
+        raise HTTPException(500, f"AI 문제 생성 실패: {e}")
 
     questions = quiz.get("questions", [])
 
@@ -262,6 +322,7 @@ def make_quiz(req: QuizReq):
         "title": quiz.get("title", "EDU AI 문제"),
         "questions": public,
     }
+
 
 @app.post("/api/quizzes/grade")
 def grade(req: GradeReq):
@@ -305,7 +366,7 @@ def grade(req: GradeReq):
         try:
             graded = grade_subjective(subjective)
         except Exception as e:
-            raise HTTPException(500, f"GPT 서술형 채점 실패: {e}")
+            raise HTTPException(500, f"AI 서술형 채점 실패: {e}")
 
         gm = {x.get("id"): x for x in graded.get("results", [])}
 
@@ -361,6 +422,7 @@ def grade(req: GradeReq):
             )
 
     return {"percentage": percent, "results": results}
+
 
 @app.get("/api/mastery")
 def mastery():

@@ -1,1 +1,0 @@
-# EDU AI backend package
