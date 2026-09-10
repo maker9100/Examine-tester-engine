@@ -7,7 +7,6 @@ DB_PATH = Path(__file__).resolve().parent.parent / "study_ai.db"
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
-
 CREATE TABLE IF NOT EXISTS materials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     filename TEXT NOT NULL,
@@ -21,7 +20,6 @@ CREATE TABLE IF NOT EXISTS materials (
     summary_json TEXT,
     created_at TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS researches (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     grade TEXT NOT NULL,
@@ -30,7 +28,6 @@ CREATE TABLE IF NOT EXISTS researches (
     research_json TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS quizzes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     material_id INTEGER,
@@ -41,7 +38,6 @@ CREATE TABLE IF NOT EXISTS quizzes (
     FOREIGN KEY(material_id) REFERENCES materials(id) ON DELETE SET NULL,
     FOREIGN KEY(research_id) REFERENCES researches(id) ON DELETE SET NULL
 );
-
 CREATE TABLE IF NOT EXISTS attempts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     quiz_id INTEGER NOT NULL,
@@ -50,7 +46,6 @@ CREATE TABLE IF NOT EXISTS attempts (
     created_at TEXT NOT NULL,
     FOREIGN KEY(quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
-
 CREATE TABLE IF NOT EXISTS mastery (
     concept TEXT PRIMARY KEY,
     score REAL NOT NULL DEFAULT 0.5,

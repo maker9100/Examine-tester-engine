@@ -30,7 +30,7 @@ ALLOWED = {
     "image/heif",
 }
 
-app = FastAPI(title="EDU AI 0.9.3")
+app = FastAPI(title="EDU AI 0.9.4")
 
 
 def _allowed_origins():
@@ -56,6 +56,18 @@ app.add_middleware(
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+
+
+
+def _raise_ai_error(prefix: str, e: Exception):
+    text = str(e)
+    low = text.lower()
+    if "resource_exhausted" in low or "429" in low or "quota" in low or "rate limit" in low:
+        raise HTTPException(429, "Gemini 사용량 제한에 도달했습니다. 잠시 후 다시 시도해주세요.")
+    if "api key" in low or "authentication" in low or "unauthorized" in low or "401" in low:
+        raise HTTPException(502, "AI API 인증에 실패했습니다. 서버의 API 키 설정을 확인해주세요.")
+    raise HTTPException(500, f"{prefix}: {text}")
 
 
 class ResearchReq(BaseModel):
@@ -88,7 +100,7 @@ def index():
     return {
         "ok": True,
         "app": "EDU AI",
-        "version": "0.9.3",
+        "version": "0.9.4",
         "backend": "Render / FastAPI",
         "health": "/api/health",
     }
@@ -100,7 +112,7 @@ def health():
     return {
         "ok": True,
         "app": "EDU AI",
-        "version": "0.9.3",
+        "version": "0.9.4",
         "ai_provider": provider,
         "gemini_ready": bool(os.getenv("GEMINI_API_KEY")),
         "openai_ready": bool(os.getenv("OPENAI_API_KEY")),
@@ -213,7 +225,7 @@ def material_analyze(mid: int):
             )
         return note
     except Exception as e:
-        raise HTTPException(500, f"AI 자료 분석 실패: {e}")
+        _raise_ai_error("AI 자료 분석 실패", e)
 
 
 @app.post("/api/research")
@@ -221,7 +233,7 @@ def research(req: ResearchReq):
     try:
         result = research_exam_scope(req.grade, req.subject, req.scope)
     except Exception as e:
-        raise HTTPException(500, f"AI 웹 시험범위 분석 실패: {e}")
+        _raise_ai_error("AI 웹 시험범위 분석 실패", e)
 
     with connect() as c:
         cur = c.execute(
@@ -287,7 +299,7 @@ def make_quiz(req: QuizReq):
             weak_concepts=weak,
         )
     except Exception as e:
-        raise HTTPException(500, f"AI 문제 생성 실패: {e}")
+        _raise_ai_error("AI 문제 생성 실패", e)
 
     questions = quiz.get("questions", [])
 
@@ -366,7 +378,7 @@ def grade(req: GradeReq):
         try:
             graded = grade_subjective(subjective)
         except Exception as e:
-            raise HTTPException(500, f"AI 서술형 채점 실패: {e}")
+            _raise_ai_error("AI 서술형 채점 실패", e)
 
         gm = {x.get("id"): x for x in graded.get("results", [])}
 
