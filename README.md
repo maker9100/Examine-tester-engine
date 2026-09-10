@@ -1,4 +1,4 @@
-# EDU AI 0.9.4
+# EDU AI 0.9.5
 
 0.9.3의 Gemini 백엔드는 유지하고, GPT 모델 설정은 변경하지 않은 프론트/오류처리 완성본입니다.
 
@@ -44,7 +44,15 @@ Start Command:
 현재 GPT 설정은 변경하지 않았습니다.
 
 ## 확인
-배포 후 아래 주소가 0.9.4를 반환해야 합니다.
+배포 후 아래 주소가 0.9.5를 반환해야 합니다.
 `https://examine-tester-engine.onrender.com/api/health`
 
-그다음 GitHub Pages에서 상단에 `서버 연결됨 · 0.9.4 · gemini`가 보이면 실제 백엔드 연결 성공입니다.
+그다음 GitHub Pages에서 상단에 `서버 연결됨 · 0.9.5 · gemini`가 보이면 실제 백엔드 연결 성공입니다.
+
+
+## 0.9.5 변경사항
+- `AI_PROVIDER=auto`에서 Gemini를 먼저 사용합니다.
+- Gemini가 429/할당량 초과/API 오류 등으로 실패하면 OpenAI로 자동 재시도합니다.
+- 반대로 `AI_PROVIDER=openai` 또는 `gemini`를 명시하면 자동 전환하지 않습니다.
+- 둘 다 실패하면 긴 API 오류 전문 대신 짧은 사용자용 오류를 반환합니다.
+- GPT/OpenAI 모델 이름은 0.9.4 설정에서 변경하지 않았습니다.
