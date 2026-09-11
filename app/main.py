@@ -3,6 +3,7 @@ import mimetypes
 import os
 import uuid
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,15 +12,19 @@ from pydantic import BaseModel, Field
 
 from .ai import (
     active_provider,
+    diagnose,
+    error_message,
+    OPENAI_MODEL,
+    GEMINI_MODEL,
     analyze_material,
     research_exam_scope,
     generate_quiz,
     grade_subjective,
 )
-from .db import connect, init_db, now_iso
+from .db import connect, init_db, now_iso, DATA_DIR
 
 BASE = Path(__file__).resolve().parent.parent
-UPLOADS = BASE / "uploads"
+UPLOADS = DATA_DIR / "uploads"
 MAX_FILE = 15 * 1024 * 1024
 ALLOWED = {
     "application/pdf",
@@ -30,7 +35,7 @@ ALLOWED = {
     "image/heif",
 }
 
-app = FastAPI(title="EDU AI 0.9.5")
+app = FastAPI(title="EDU AI 0.9.6")
 
 
 def _allowed_origins():
@@ -61,13 +66,9 @@ app.add_middleware(
 
 
 def _raise_ai_error(prefix: str, e: Exception):
-    text = str(e)
-    low = text.lower()
-    if "resource_exhausted" in low or "429" in low or "quota" in low or "rate limit" in low:
-        raise HTTPException(429, "Gemini 사용량 제한에 도달했습니다. 잠시 후 다시 시도해주세요.")
-    if "api key" in low or "authentication" in low or "unauthorized" in low or "401" in low:
-        raise HTTPException(502, "AI API 인증에 실패했습니다. 서버의 API 키 설정을 확인해주세요.")
-    raise HTTPException(500, f"{prefix}: {text}")
+    # Only local, sanitized RuntimeErrors can reach the UI verbatim.
+    message = str(e) if isinstance(e, RuntimeError) else error_message(e)
+    raise HTTPException(502, f"{prefix}: {message}")
 
 
 class ResearchReq(BaseModel):
@@ -81,7 +82,8 @@ class QuizReq(BaseModel):
     research_id: int | None = None
     count: int = Field(10, ge=1, le=30)
     mcq_percent: int = Field(70, ge=0, le=100)
-    difficulty: str = "mixed"
+    difficulty: Literal["mixed", "easy", "normal", "hard"] = "mixed"
+    review: bool = False
 
 
 class GradeReq(BaseModel):
@@ -91,19 +93,13 @@ class GradeReq(BaseModel):
 
 @app.on_event("startup")
 def startup():
-    UPLOADS.mkdir(exist_ok=True)
+    UPLOADS.mkdir(parents=True, exist_ok=True)
     init_db()
 
 
 @app.get("/")
 def index():
-    return {
-        "ok": True,
-        "app": "EDU AI",
-        "version": "0.9.5",
-        "backend": "Render / FastAPI",
-        "health": "/api/health",
-    }
+    return FileResponse(BASE / "index.html", media_type="text/html")
 
 
 @app.get("/api/health")
@@ -112,12 +108,23 @@ def health():
     return {
         "ok": True,
         "app": "EDU AI",
-        "version": "0.9.5",
+        "version": "0.9.6",
         "ai_provider": provider,
+        "openai_model": OPENAI_MODEL,
+        "gemini_model": GEMINI_MODEL,
+        "connection_verified": False,
         "gemini_ready": bool(os.getenv("GEMINI_API_KEY")),
         "openai_ready": bool(os.getenv("OPENAI_API_KEY")),
         "auto_fallback": os.getenv("AI_PROVIDER", "auto").strip().lower() == "auto",
     }
+
+
+@app.post("/api/ai/check")
+def ai_check():
+    try:
+        return diagnose()
+    except Exception as e:
+        _raise_ai_error("AI 연결 확인 실패", e)
 
 
 @app.post("/api/materials")
@@ -129,6 +136,9 @@ async def upload_material(file: UploadFile = File(...)):
     data = await file.read(MAX_FILE + 1)
     if len(data) > MAX_FILE:
         raise HTTPException(413, "파일은 15MB 이하만 지원합니다.")
+
+    if not data:
+        raise HTTPException(400, "빈 파일은 업로드할 수 없습니다.")
 
     stored = f"{uuid.uuid4().hex}{Path(file.filename or '').suffix.lower()}"
     (UPLOADS / stored).write_bytes(data)
@@ -185,15 +195,13 @@ def delete_material(mid: int):
         if not row:
             raise HTTPException(404, "자료를 찾을 수 없습니다.")
 
-        # quizzes.material_id는 DB 스키마의 ON DELETE SET NULL로 기록을 보존한다.
+        path = UPLOADS / row["stored_name"]
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            raise HTTPException(500, "원본 파일 삭제에 실패했습니다. 잠시 후 다시 시도하세요.")
+        # Preserve quiz/attempt history via ON DELETE SET NULL.
         c.execute("DELETE FROM materials WHERE id=?", (mid,))
-
-    path = UPLOADS / row["stored_name"]
-    try:
-        if path.exists():
-            path.unlink()
-    except Exception:
-        pass
 
     return {"ok": True, "deleted_id": mid}
 
@@ -267,7 +275,11 @@ def make_quiz(req: QuizReq):
                 "SELECT summary_json FROM materials WHERE id=?",
                 (req.material_id,),
             ).fetchone()
-            if row and row["summary_json"]:
+            if not row:
+                raise HTTPException(404, "선택한 자료를 찾을 수 없습니다.")
+            if not row["summary_json"]:
+                raise HTTPException(400, "선택한 자료를 먼저 AI 분석하세요.")
+            if row["summary_json"]:
                 note = json.loads(row["summary_json"])
 
         if req.research_id:
@@ -275,6 +287,8 @@ def make_quiz(req: QuizReq):
                 "SELECT research_json FROM researches WHERE id=?",
                 (req.research_id,),
             ).fetchone()
+            if not row:
+                raise HTTPException(404, "시험범위 분석 결과를 찾을 수 없습니다.")
             if row:
                 research = json.loads(row["research_json"])
 
@@ -298,6 +312,7 @@ def make_quiz(req: QuizReq):
             mcq_percent=req.mcq_percent,
             difficulty=req.difficulty,
             weak_concepts=weak,
+            review=req.review,
         )
     except Exception as e:
         _raise_ai_error("AI 문제 생성 실패", e)
@@ -332,6 +347,8 @@ def make_quiz(req: QuizReq):
 
     return {
         "quiz_id": qid,
+        "reviewed": quiz.get("reviewed", False),
+        "ai": quiz.get("_ai", {}),
         "title": quiz.get("title", "EDU AI 문제"),
         "questions": public,
     }
@@ -365,6 +382,10 @@ def grade(req: GradeReq):
                 "explanation": q.get("explanation", ""),
                 "error_type": None if correct else "정답 선택 오류",
             })
+        elif ua is None or not str(ua).strip():
+            results.append({"id": qid, "concept": q.get("concept", "기타"),
+                            "correct": False, "score": 0.0, "feedback": "답안을 입력하지 않았다.",
+                            "explanation": q.get("explanation", ""), "error_type": "미응답"})
         else:
             subjective.append({
                 "id": qid,
@@ -397,6 +418,13 @@ def grade(req: GradeReq):
                 "error_type": None if correct else g.get("error_type", "개념 이해 부족"),
             })
 
+    question_map = {q["id"]: q for q in questions}
+    for result in results:
+        original = question_map[result["id"]]
+        result["question"] = original["question"]
+        result["answer"] = original["answer"]
+        result["choices"] = original.get("choices", [])
+        result["user_answer"] = req.answers.get(result["id"], "")
     order = {q.get("id"): i for i, q in enumerate(questions)}
     results.sort(key=lambda x: order.get(x["id"], 9999))
 

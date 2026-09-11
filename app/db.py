@@ -1,9 +1,11 @@
 import sqlite3
+import os
 from pathlib import Path
 from contextlib import contextmanager
 from datetime import datetime, timezone
 
-DB_PATH = Path(__file__).resolve().parent.parent / "study_ai.db"
+DATA_DIR = Path(os.getenv("DATA_DIR", str(Path(__file__).resolve().parent.parent)))
+DB_PATH = DATA_DIR / "study_ai.db"
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -70,5 +72,6 @@ def connect():
         conn.close()
 
 def init_db():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     with connect() as conn:
         conn.executescript(SCHEMA)
